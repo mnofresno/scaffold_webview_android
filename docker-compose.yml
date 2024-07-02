@@ -1,0 +1,11 @@
+version: '3'
+services:
+  android-build:
+    build: .
+    volumes:
+      - ./app:/app
+      - ./src:/src
+    command: bash
+    environment:
+      ANDROID_HOME: /usr/local/android-sdk
+      PATH: /usr/local/android-sdk/cmdline-tools/tools/bin:/usr/local/android-sdk/platform-tools:$PATH
