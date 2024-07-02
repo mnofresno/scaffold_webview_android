@@ -5,7 +5,10 @@ services:
     volumes:
       - ./app:/app
       - ./src:/src
-    command: bash
     environment:
       ANDROID_HOME: /usr/local/android-sdk
-      PATH: /usr/local/android-sdk/cmdline-tools/tools/bin:/usr/local/android-sdk/platform-tools:$PATH
+      PATH: $ANDROID_HOME/cmdline-tools/tools/bin:$ANDROID_HOME/platform-tools:$PATH
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    stdin_open: true
+    tty: true
