@@ -3,14 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebView Example</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>WebView Test</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Hello, WebView!</h1>
-        <p>This is a simple HTML page displayed in an Android WebView.</p>
-    </div>
-    <script src="js/main.js"></script>
+    <h1>Hello, WebView!</h1>
+    <button onclick="sendNotification()">Send Notification</button>
+    <script>
+        function sendNotification() {
+            if (typeof Android !== 'undefined' && Android !== null) {
+                Android.showNotification('Notification Title', 'This is the notification content from HTML/JavaScript.');
+            } else {
+                alert('Android interface not available.');
+            }
+        }
+    </script>
 </body>
 </html>
