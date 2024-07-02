@@ -29,6 +29,9 @@ RUN yes | sdkmanager --licenses && \
 # Set the working directory
 WORKDIR /app
 
+# Copy the script to the working directory
+COPY scripts/copy_assets.sh /app/scripts/copy_assets.sh
+
 # Expose the source code directory as a volume
 VOLUME ["/app", "/src"]
 
