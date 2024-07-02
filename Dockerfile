@@ -6,7 +6,10 @@ RUN apt-get update && apt-get install -y \
     unzip \
     wget \
     git \
-    gradle
+    gradle \
+    android-tools-adb \
+    iproute2 \
+    iputils-ping
 
 # Download and install Android SDK command line tools
 RUN wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O sdk-tools.zip \
@@ -17,7 +20,7 @@ RUN wget https://dl.google.com/android/repository/commandlinetools-linux-8512546
 
 # Set environment variables
 ENV ANDROID_HOME /usr/local/android-sdk
-ENV PATH $ANDROID_HOME/cmdline-tools/tools/bin:$ANDROID_HOME/platform-tools:$PATH
+ENV PATH $ANDROID_HOME/cmdline-tools/tools/bin:$ANDROID_HOME/platform-tools:/usr/bin:$PATH
 
 # Accept licenses and install necessary SDK packages
 RUN yes | sdkmanager --licenses && \

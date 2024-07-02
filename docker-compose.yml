@@ -7,7 +7,7 @@ services:
       - ./src:/src
     environment:
       ANDROID_HOME: /usr/local/android-sdk
-      PATH: $ANDROID_HOME/cmdline-tools/tools/bin:$ANDROID_HOME/platform-tools:$PATH
+      PATH: $ANDROID_HOME/cmdline-tools/tools/bin:$ANDROID_HOME/platform-tools:/usr/bin:$PATH
     devices:
       - /dev/bus/usb:/dev/bus/usb
     stdin_open: true
