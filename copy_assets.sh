@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo "Copiying assets into apk dir..."
 # Define source and destination directories
 SRC_DIR=./src
 DEST_DIR=./app/src/main/assets/

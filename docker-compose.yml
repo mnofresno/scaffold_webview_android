@@ -1,7 +1,7 @@
 version: '3'
 services:
   android-build:
-    build: .
+    image: android-build
     volumes:
       - ./app:/app
       - ./src:/src

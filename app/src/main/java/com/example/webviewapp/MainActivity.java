@@ -17,6 +17,6 @@ public class MainActivity extends AppCompatActivity {
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("file:///src/index.html");
+        webView.loadUrl("file:///index.html");
     }
 }

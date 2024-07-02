@@ -3,8 +3,7 @@
 # Copy assets from src to app/assets
 ./copy_assets.sh
 
-cd /app
-./gradlew assembleDebug
+docker-compose exec android-build ./build.sh
 
 # Check if ADB server is running and restart if necessary
 adb kill-server
