@@ -27,3 +27,5 @@ out/
 
 # 3rd part
 android/src/main/assets/
+dist
+node_modules

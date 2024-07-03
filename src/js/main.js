@@ -1,3 +1,6 @@
+import $ from 'jquery';
+import 'jquery-ui/ui/widgets/dialog';
+
 document.addEventListener("DOMContentLoaded", function() {
     // Inicializar el diálogo cuando el DOM esté completamente cargado
     $("#dialog").dialog({
