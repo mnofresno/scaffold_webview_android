@@ -13,13 +13,18 @@ mkdir -p $DEST_DIR
 # Copy all files and directories from SRC_DIR to DEST_DIR
 cp -r $SRC_DIR/* $DEST_DIR/
 
+# Instala dependencias
+docker-compose exec android-build bash -c "cd /app && yarn install"
+
+# Construye el proyecto usando Gradle
 docker-compose exec android-build ./gradlew assembleDebug
 
-# Check if ADB server is running and restart if necessary
+
+# Comprueba si el servidor ADB está funcionando y reinícialo si es necesario
 adb kill-server
 adb start-server
 
-# Wait for any device to be connected
+# Espera a que cualquier dispositivo esté conectado
 adb devices
 adb wait-for-device
 
