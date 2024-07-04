@@ -15,6 +15,7 @@ cp -r $SRC_DIR/* $DEST_DIR/
 
 # Instala dependencias
 docker-compose exec android-build bash -c "cd /app && yarn install"
+docker-compose exec android-build bash -c "cd /app && yarn run build"
 
 # Construye el proyecto usando Gradle
 docker-compose exec android-build ./gradlew assembleDebug
