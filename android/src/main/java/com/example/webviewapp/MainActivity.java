@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setDomStorageEnabled(true);
         webSettings.setAllowFileAccessFromFileURLs(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
+        webView.clearCache(true);  // Limpia la caché
 
         // Enable JavaScript alerts and console logging
         webView.setWebChromeClient(new WebChromeClient() {

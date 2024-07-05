@@ -10,8 +10,8 @@ module.exports = (env, argv) => {
         output: {
             filename: 'bundle.js',
             path: path.resolve(__dirname, 'dist'),
-            libraryTarget: 'umd',  // Cambiado a UMD para compatibilidad
-            globalObject: 'this',  // Necesario para UMD en WebView
+            libraryTarget: 'umd',
+            globalObject: 'this',
         },
         module: {
             rules: [
@@ -45,8 +45,9 @@ module.exports = (env, argv) => {
                 directory: path.join(__dirname, 'dist'),
             },
             compress: true,
-            port: 9000,
-            hot: true
+            port: 9350,
+            hot: true,
+            open: true,
         },
         mode: isProduction ? 'production' : 'development'
     };
