@@ -1,5 +1,7 @@
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/dialog';
+import 'jquery-ui/themes/base/all.css';  // Importa el CSS de jQuery UI
+import '../css/styles.css';  // Tu propio CSS
 
 document.addEventListener("DOMContentLoaded", function() {
     // Inicializar el diálogo cuando el DOM esté completamente cargado
