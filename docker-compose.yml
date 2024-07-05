@@ -1,7 +1,7 @@
 version: '3'
 services:
   android-build:
-    image: ghcr.io/mnofresno/android-build:0.0.2
+    image: ghcr.io/mnofresno/android-build:0.0.3
     working_dir: /app/android
     volumes:
       - .:/app
