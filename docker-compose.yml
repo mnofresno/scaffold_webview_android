@@ -1,10 +1,10 @@
 version: '3'
 services:
   android-build:
-    image: ghcr.io/mnofresno/android-build:0.0.1
+    image: ghcr.io/mnofresno/android-build:0.0.2
+    working_dir: /app/android
     volumes:
-      - ./app:/app
-      - ./src:/src
+      - ./:/app
     environment:
       ANDROID_HOME: /usr/local/android-sdk
       PATH: $ANDROID_HOME/cmdline-tools/tools/bin:$ANDROID_HOME/platform-tools:/usr/bin:$PATH
