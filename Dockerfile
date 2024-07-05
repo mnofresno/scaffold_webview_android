@@ -26,11 +26,5 @@ ENV PATH $ANDROID_HOME/cmdline-tools/tools/bin:$ANDROID_HOME/platform-tools:/usr
 RUN yes | sdkmanager --licenses && \
     sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "extras;google;m2repository" "extras;android;m2repository"
 
-# Set the working directory
-WORKDIR /app
-
-# Expose the source code directory as a volume
-VOLUME ["/app", "/src"]
-
 # Default command
 CMD ["bash"]

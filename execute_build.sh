@@ -3,7 +3,7 @@
 # Copy assets from src to app/assets
 ./copy_assets.sh
 
-docker-compose exec android-build /app/gradlew assembleDebug
+docker-compose exec android-build ./gradlew assembleDebug
 
 # Check if ADB server is running and restart if necessary
 adb kill-server
@@ -14,4 +14,4 @@ adb devices
 adb wait-for-device
 
 # Install the APK
-adb install -r app/build/outputs/apk/debug/app-debug.apk
+adb install -r android/build/outputs/apk/debug/android-debug.apk
