@@ -10,12 +10,21 @@ module.exports = (env, argv) => {
         output: {
             filename: 'bundle.js',
             path: path.resolve(__dirname, 'dist'),
+            libraryTarget: 'umd',  // Cambiado a UMD para compatibilidad
+            globalObject: 'this',  // Necesario para UMD en WebView
         },
         module: {
             rules: [
                 {
                     test: /\.css$/i,
                     use: ['style-loader', 'css-loader'],
+                },
+                {
+                    test: /\.(png|jpg|gif)$/i,
+                    type: 'asset/resource',
+                    generator: {
+                        filename: 'images/[hash][ext][query]'
+                    }
                 },
             ],
         },
@@ -27,12 +36,14 @@ module.exports = (env, argv) => {
             }),
             new CopyWebpackPlugin({
                 patterns: [
-                    { from: 'src', to: 'assets' } // Copia todo el contenido de src a dist/assets
+                    { from: path.resolve(__dirname, 'dist'), to: path.resolve(__dirname, 'android/src/main/assets') }
                 ]
             })
         ],
         devServer: {
-            contentBase: path.join(__dirname, 'dist'),
+            static: {
+                directory: path.join(__dirname, 'dist'),
+            },
             compress: true,
             port: 9000,
             hot: true
