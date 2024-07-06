@@ -18,10 +18,11 @@ RUN wget https://dl.google.com/android/repository/commandlinetools-linux-8512546
     && rm sdk-tools.zip \
     && mv /usr/local/android-sdk/cmdline-tools/cmdline-tools /usr/local/android-sdk/cmdline-tools/tools
 
+ENV BUILD_TOOLS_VERSION "30.0.3"
 ENV ANDROID_HOME /usr/local/android-sdk
 ENV PATH $ANDROID_HOME/cmdline-tools/tools/bin:$ANDROID_HOME/platform-tools:/usr/bin:$PATH
 
 RUN yes | sdkmanager --licenses && \
-    sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "extras;google;m2repository" "extras;android;m2repository"
+    sdkmanager "platform-tools" "platforms;android-30" "build-tools;${BUILD_TOOLS_VERSION}" "extras;google;m2repository" "extras;android;m2repository"
 
 CMD ["bash"]
