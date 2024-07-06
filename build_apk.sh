@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IMAGE_NAME="ghcr.io/mnofresno/android-build-yarn-webpack:1.0.0"
+IMAGE_NAME="ghcr.io/mnofresno/android-build-yarn-webpack:2.0.0"
 CONTAINER_NAME="android-build"
 WORKING_DIR="/app/android"
 APK_PATH_INSIDE_CONTAINER="build/outputs/apk/debug/android-debug.apk"
@@ -12,7 +12,7 @@ docker run -d --name $CONTAINER_NAME \
     --network host \
     -e ANDROID_HOME=/usr/local/android-sdk \
     -e PATH=$ANDROID_HOME/cmdline-tools/tools/bin:$ANDROID_HOME/platform-tools:/usr/bin:$PATH \
-    -e BUILD_TOOLS_VERSION="30.0.3" \
+    -e BUILD_TOOLS_VERSION="34.0.0" \
     $IMAGE_NAME tail -f /dev/null
 
 run_docker_command() {

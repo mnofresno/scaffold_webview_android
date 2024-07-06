@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IMAGE_NAME="ghcr.io/mnofresno/android-alpine-build-base:1.0.0"
+IMAGE_NAME="ghcr.io/mnofresno/android-build:2.0.0"
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in

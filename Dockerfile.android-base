@@ -1,8 +1,10 @@
-FROM alpine:3.20.1
+FROM alpine:3.18.0
+
+RUN apk update && apk del openjdk11
 
 RUN apk update && apk add --no-cache \
     gcompat \
-    openjdk11 \
+    openjdk17 \
     unzip \
     git \
     android-tools \
@@ -12,17 +14,18 @@ RUN apk update && apk add --no-cache \
     bash \
     gnupg
 
-RUN wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O sdk-tools.zip \
+RUN wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O sdk-tools.zip \
     && mkdir -p /usr/local/android-sdk/cmdline-tools \
     && unzip sdk-tools.zip -d /usr/local/android-sdk/cmdline-tools \
     && rm sdk-tools.zip \
     && mv /usr/local/android-sdk/cmdline-tools/cmdline-tools /usr/local/android-sdk/cmdline-tools/tools
 
-ENV BUILD_TOOLS_VERSION "30.0.3"
-ENV ANDROID_HOME /usr/local/android-sdk
-ENV PATH $ANDROID_HOME/cmdline-tools/tools/bin:$ANDROID_HOME/platform-tools:/usr/bin:$PATH
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+ENV BUILD_TOOLS_VERSION="34.0.0"
+ENV ANDROID_HOME=/usr/local/android-sdk
+ENV PATH=$JAVA_HOME/bin:$ANDROID_HOME/cmdline-tools/tools/bin:$ANDROID_HOME/platform-tools:/usr/bin:$PATH
 
 RUN yes | sdkmanager --licenses && \
-    sdkmanager "platform-tools" "platforms;android-30" "build-tools;${BUILD_TOOLS_VERSION}" "extras;google;m2repository" "extras;android;m2repository"
+    sdkmanager "platform-tools" "platforms;android-34" "build-tools;${BUILD_TOOLS_VERSION}" "extras;google;m2repository" "extras;android;m2repository"
 
 CMD ["bash"]

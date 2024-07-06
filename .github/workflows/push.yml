@@ -31,7 +31,7 @@ jobs:
         with:
           context: .
           file: Dockerfile.android-base
-          tags: 'ghcr.io/mnofresno/android-build:1.0.0'
+          tags: 'ghcr.io/mnofresno/android-build:2.0.0'
           push: true
           cache-from: 'type=local,src=/tmp/.buildx-cache'
           cache-to: 'type=local,dest=/tmp/.buildx-cache,mode=max'
@@ -41,7 +41,7 @@ jobs:
         with:
           context: .
           file: Dockerfile
-          tags: 'ghcr.io/mnofresno/android-build-yarn-webpack:1.0.0'
+          tags: 'ghcr.io/mnofresno/android-build-yarn-webpack:2.0.0'
           push: true
           cache-from: 'type=local,src=/tmp/.buildx-cache'
           cache-to: 'type=local,dest=/tmp/.buildx-cache,mode=max'
