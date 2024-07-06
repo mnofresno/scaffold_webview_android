@@ -10,9 +10,11 @@ buildscript {
 
 apply plugin: 'com.android.application'
 
+def _buildToolsVersion = System.getenv("BUILD_TOOLS_VERSION") ?: "30.0.3"
+
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+    buildToolsVersion _buildToolsVersion
 
     defaultConfig {
         applicationId "com.example.webviewapp"

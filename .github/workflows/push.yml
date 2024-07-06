@@ -1,13 +1,64 @@
-name: docker-compose-actions-workflow
+name: android-docker-builder-workflow
 'on': push
+
 jobs:
-  test:
+  setup:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: '${{ runner.os }}-buildx-${{ github.sha }}'
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: '${{ github.actor }}'
           password: '${{ secrets.GHCR_TOKEN }}'
+
+      - name: Build and push base android docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: Dockerfile.android-base
+          tags: 'ghcr.io/mnofresno/android-build:1.0.0'
+          push: true
+          cache-from: 'type=local,src=/tmp/.buildx-cache'
+          cache-to: 'type=local,dest=/tmp/.buildx-cache,mode=max'
+
+      - name: Build and push yarn+webpack docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: Dockerfile
+          tags: 'ghcr.io/mnofresno/android-build-yarn-webpack:1.0.0'
+          push: true
+          cache-from: 'type=local,src=/tmp/.buildx-cache'
+          cache-to: 'type=local,dest=/tmp/.buildx-cache,mode=max'
+
+  build-apk:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GHCR_TOKEN }}'
+
+      - name: Build APK file
+        run: ./build_apk.sh
