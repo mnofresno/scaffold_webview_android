@@ -1,4 +1,4 @@
-FROM ghcr.io/mnofresno/android-build:1.0.0
+FROM ghcr.io/mnofresno/android-build:2.0.0
 
 RUN apk update && apk add --no-cache bash nodejs yarn
 
