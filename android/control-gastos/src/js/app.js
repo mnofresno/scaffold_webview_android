@@ -1,3 +1,5 @@
+import '../styles/ionic.app.scss';
+import '../styles/style.css';
 import angular from 'angular';
 import controllers from './controllers';
 import services from './services';
@@ -8,6 +10,31 @@ import directives from './directives';
 import {$ionicPlatform, $ionicHistory, $ionicLoading} from './ionic-cordova';
 import '@uirouter/angularjs';
 import 'ng-cordova';
+
+// app.js
+// angular.module('gastos', ['ui.router'])
+//   .config(function($stateProvider, $urlRouterProvider) {
+//     $stateProvider
+//       .state('home', {
+//         url: '/home',
+//         templateUrl: 'home.html',
+//         controller: 'HomeController'
+//       })
+//       .state('about', {
+//         url: '/about',
+//         templateUrl: 'about.html',
+//         controller: 'AboutController'
+//       });
+
+//     // Configurar la ruta predeterminada
+//     $urlRouterProvider.otherwise('/home');
+//   })
+//   .controller('HomeController', function($scope) {
+//     $scope.message = 'Welcome to Home Page!';
+//   })
+//   .controller('AboutController', function($scope) {
+//     $scope.message = 'This is the About Page!';
+//   });
 
 const app = angular.module('gastos', [
     'ui.router',
@@ -20,9 +47,9 @@ const app = angular.module('gastos', [
     'gastos.directives'
 ]);
 
-angular.element(document).ready(function() {
-    angular.bootstrap(document, ['gastos']);
-});
+// angular.element(document).ready(function() {
+//     angular.bootstrap(document, ['gastos']);
+// });
 
 app.run(function(
               $state,

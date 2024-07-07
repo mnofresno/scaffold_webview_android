@@ -19,6 +19,10 @@ module.exports = (env, argv) => {
                     use: ['style-loader', 'css-loader'],
                 },
                 {
+                    test: /\.scss$/i,
+                    use: ['style-loader', 'css-loader', 'sass-loader'],
+                },
+                {
                     test: /\.(png|jpg|gif)$/i,
                     type: 'asset/resource',
                     generator: {
@@ -35,9 +39,16 @@ module.exports = (env, argv) => {
             })
         ],
         devServer: {
-            static: {
-                directory: path.join(__dirname, 'dist'),
-            },
+            static: [
+                {
+                    directory: path.join(__dirname, 'src'),
+                    publicPath: '/',
+                },
+                {
+                    directory: path.join(__dirname, 'www'),
+                    publicPath: '/www',
+                },
+            ],
             compress: true,
             port: 9350,
             hot: true,
