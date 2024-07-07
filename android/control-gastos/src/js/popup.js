@@ -8,13 +8,13 @@ var POPUP_TPL =
   '<div class="popup-container" ng-class="cssClass">' +
     '<div class="popup">' +
       '<div class="popup-head">' +
-        '<h3 class="popup-title" ng-bind="title"></h3>' +
-        '<h5 class="popup-sub-title" ng-if="subTitle">{{trustedHtml(subTitle)}}</h5>' +
+        '<h3 class="popup-title" ng-bind="trustedTitle"></h3>' +
+        '<h5 class="popup-sub-title" ng-if="subTitle" ng-bind="trustedSubTitle"></h5>' +
       '</div>' +
-      '<div class="popup-body" ng-bind-html="trustedHtml(template)">' +
+      '<div class="popup-body" ng-bind-html="trustedTemplate">' +
       '</div>' +
       '<div class="popup-buttons" ng-show="buttons.length">' +
-        '<button ng-repeat="button in buttons" ng-click="$buttonTapped(button, $event)" class="button" ng-class="button.type || \'button-default\'">{{button.text}}</button>' +
+        '<button ng-repeat="button in buttons" ng-click="$buttonTapped(button, $event)" class="button" ng-class="button.type || \'button-default\'" ng-bind="button.text"></button>' +
       '</div>' +
     '</div>' +
   '</div>';
@@ -26,9 +26,6 @@ GastosPopupModule.factory('$gastosPopup', [
   '$compile',
   '$sce', function($q, $timeout, $rootScope, $compile, $sce) {
     var popupStack = [];
-    $rootScope.trustedHtml = function(html) {
-        return $sce.trustAsHtml(html);
-    };
 
     var $gastosPopup = {
       show: showPopup,
@@ -87,7 +84,7 @@ GastosPopupModule.factory('$gastosPopup', [
       .then(function(template) {
         var popupBody = jqLite(self.element[0].querySelector('.popup-body'));
         if (template) {
-          popupBody.html(template);
+          self.scope.trustedTemplate = $sce.trustAsHtml(template);
           $compile(popupBody.contents())(self.scope);
         } else {
           popupBody.remove();

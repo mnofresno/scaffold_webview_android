@@ -8,6 +8,7 @@ angular.module('gastos.services', [])
     {
         $scope.mensajeRegistro = $sce.trustAsHtml(mensaje);
 
+
         $ionicModal.fromTemplateUrl('templates/posicion.html', {
             scope: $scope
           }).then(function(modal) {

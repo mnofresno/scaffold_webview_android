@@ -612,9 +612,10 @@ angular.module('gastos.controllers', [])
                         Auth.logout();
                         ViewModel.errorLogin = true;
                     }
-                    $ionicViewService.nextViewOptions({
-                        disableBack: true
-                    });
+                    // FIXME: Add mechanism to avoid go back button
+                    // $ionicViewService.nextViewOptions({
+                    //     disableBack: true
+                    // });
                 }, function(response) {
                     const message = response.data
                         ? response.data.error.description
