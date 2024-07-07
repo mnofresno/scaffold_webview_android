@@ -1,0 +1,36 @@
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Posici&oacute;n consolidada</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="ventana.hide()">Cerrar</button>
+    </div>
+  </ion-header-bar>
+  <ion-content ng-controller="PosicionCtrl">
+        <div>
+                <span>
+                    <center>
+                        <span ng-if="viewModel.mensajeRegistro !== undefined" ng-click="ventana.hide()"><span ng-bind-html="viewModel.mensajeRegistro"></span><p></p></span>
+                        <div class="item container" ng-if="viewModel.mostrarResumen" >
+                            <table width="100%">
+                                <tr><td colspan="2"><strong>Gastos de este mes</strong></td>
+                                <tr><td>Total</td><td> <strong> $ {{ viewModel.resumen.totalMensual}} </strong></td></tr>
+                                <tr><td>Propio</td><td> <strong> $ {{ viewModel.resumen.totalMensualPropio}} </strong></td></tr>
+                                <tr><td>Ajeno</td><td> <strong> $ {{ viewModel.resumen.totalMensualAjeno}} </strong></td></tr>
+                                <tr><td colspan="2"><strong>Reintegros de este mes</strong></td>
+                                <tr><td>Total</td><td> <strong> $ {{ viewModel.resumen.reintegroMensualTotal}} </strong></td></tr>
+                                <tr><td>Recibidos</td><td> <strong> $ {{ viewModel.resumen.reintegroMensualRecibido}} </strong></td></tr>
+                                <tr><td>Realizados</td><td> <strong> $ {{ viewModel.resumen.reintegroMensualRealizado}} </strong></td></tr>
+                                <tr><td colspan="2"><strong>Gastos hist&oacute;ricos</strong></td>
+                                <tr><td>Total</td><td> <strong> $ {{ viewModel.resumen.total}} </strong></td></tr>
+                                <tr><td>Propio</td><td> <strong> $ {{ viewModel.resumen.totalPropio}} </strong></td></tr>
+                                <tr><td>Ajeno</td><td> <strong> $ {{ viewModel.resumen.totalAjeno}} </strong></td></tr>
+                                <tr><td colspan="2"><strong>Saldo actual</strong></td>
+                                <tr><td colspan="2"> <strong> $ {{ viewModel.resumen.diferencia}} <i style="font-size: 16pt;" class="fa" ng-class="viewModel.resultIcon()" ></i> </strong></td>
+                                <tr><td colspan="2"><ion-checkbox color="dark" checked="false" ng-change="viewModel.loadResumen()" ng-model="viewModel.incluirTarjeta" ng-true-value="true" ng-false-value="false">Incluir gastos aún impagos</ion-checkbox></td></tr>
+                            </table>
+                        </div>
+                    </center>
+                </span>
+        </div>
+  </ion-content>
+</ion-modal-view>

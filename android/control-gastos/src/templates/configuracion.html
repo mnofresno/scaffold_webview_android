@@ -1,0 +1,50 @@
+<ion-view>
+    <ion-content padding="true" class="has-header col-xs-12">
+        <p>Configurac&oacute;n del sistema</p>
+        <center>
+        <div class="row">
+            <div class="col">
+                <span style="float: left;font-size:10px; "><strong>Servidor:</strong></span>
+            </div>
+        </div>
+        <div class="row">
+            <div  class="col">
+                <label class="item item-input">
+                    <input style="font-size:10px; font-family: monospace;" id="urlServidor" type="text" ng-value="viewModel.config.apiEndpoint.produccion" readonly ng-click="viewModel.cambiarUrl()">
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <div class="row" ng-repeat="fila in viewModel.categoriasPosibles | chunk: 2">
+                    <div class="col col-50 text-center" style="margin: -3px;" ng-repeat="cat in fila track by cat.id">
+                        <label class="item item-radio ng-valid">
+                            <input type="checkbox" name="radio-group" ng-checked="viewModel.categoriaSeleccionada(cat)" ng-click="viewModel.toggleCheck(cat)" class="ng-untouched ng-valid ng-dirty ng-valid-parse">
+                            <div class="radio-content">
+                                <div style="margin-left: -5px;" class="item-content disable-pointer-events">
+                                    <span style="margin-left: -5px;font-size: 8pt;" class="ng-binding"><i ng-class="cat.icono" class="text-left"></i>&nbsp;{{ cat.titulo }}</span>
+                                </div>
+                                <i style="margin-left: -10px;" class="radio-icon disable-pointer-events icon ion-checkmark"></i>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col col-100 text-center" style="margin: -3px;">
+                <label class="item item-radio ng-valid">
+                    <input type="checkbox" name="radio-group" class="ng-untouched ng-valid ng-dirty ng-valid-parse"
+                            ng-click="viewModel.toggleSaldoAutoRefresh()" ng-checked="viewModel.config.saldoAutoRefresh === true">
+                    <div class="radio-content">
+                        <div style="margin-left: -5px;" class="item-content disable-pointer-events">
+                            <span style="margin-left: -5px;font-size: 8pt;" class="ng-binding">Actualizar saldo cada 30 SEG</span>
+                        </div>
+                        <i style="margin-left: -10px;" class="radio-icon disable-pointer-events icon ion-checkmark"></i>
+                    </div>
+                </label>
+            </div>
+        </div>
+    </center>
+    </ion-content>
+</ion-view>

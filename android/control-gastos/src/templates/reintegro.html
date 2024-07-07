@@ -1,0 +1,33 @@
+<ion-view>
+    <ion-content padding="true" class="has-header">
+        <div class="item container">
+                <div ng-if="true">
+                    <h2>Destinatario:</h2>
+                    <center>
+                        <span ng-repeat="usr in viewModel.posiblesUsuariosDestino">
+                            <ion-radio ng-model="viewModel.usuarioDestino" ng-value="usr">{{usr.name}}</ion-radio>
+                        </span>
+                    </center>
+                </div>
+                    <div class="col text-center">
+                        <label for="importeReintegro" class="item item-input"><span class="input-label"><strong>Importe:</strong></span>
+                        <input style="font-size:25px; font-family: monospace;" id="importeReintegro" type="number" class = "item text-right item-input" ng-disabled="viewModel.soloEnviarMensaje" ng-model="viewModel.importeReintegro" step="0.01"></label>
+                    </div>
+                    <div class="col text-center">
+                        <label for="comentarioReintegro" class="item item-input"><span class="input-label"><strong>Comentario:</strong></span>
+                        <input style="font-size:25px; font-family: monospace;" id="comentarioReintegro" type="text" class = "item text-right item-input" ng-model="viewModel.comentarioReintegro"></label>
+                    </div>
+        </div>
+        <div>
+            <ion-checkbox color="dark" checked="false" ng-change="cambioSoloNotificar()" ng-model="viewModel.soloEnviarMensaje" ng-true-value="true" ng-false-value="false">Sólo notificar (No registra movimientos)</ion-checkbox>
+        <div>
+        <div>
+            <button ng-disabled="!viewModel.isValid()" ng-click="viewModel.registrar()" class="button button-block button-positive">Registrar</button>
+        </div>
+        <div>
+            <button ng-click="viewModel.limpiarFormulario()" class="button button-block button-positive">Limpiar</button>
+        </div>
+    </ion-content>
+
+    
+</ion-view>
