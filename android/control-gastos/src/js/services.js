@@ -1,6 +1,6 @@
 angular.module('gastos.services', [])
 
-.service('PosicionService', function($ionicModal, Gasto, $sce)
+.service('PosicionService', function(Gasto, $sce)
 {
     var self = this;
 
@@ -29,7 +29,7 @@ angular.module('gastos.services', [])
     return self;
 })
 
-.service('Categoria', function($http, ENV, $localStorage, $q, Network, ApiEndPoint, lodash)
+.service('Categoria', function($http, ENV, $localStorage, $q, Network, ApiEndPoint)
 {
     var self = this;
 
@@ -129,7 +129,7 @@ angular.module('gastos.services', [])
     return self;
 })
 
-.service('Reintegro', function($http, ENV, md5, Auth, ApiEndPoint)
+.service('Reintegro', function($http, ENV, Auth, ApiEndPoint)
 {
     var self = this;
 
@@ -150,7 +150,7 @@ angular.module('gastos.services', [])
     return self;
 })
 
-.service('Gasto', function($http, ENV, md5, Auth, Network, $localStorage, $q, ApiEndPoint, moment)
+.service('Gasto', function($http, ENV, Auth, Network, $localStorage, $q, ApiEndPoint)
 {
     var self = this;
 

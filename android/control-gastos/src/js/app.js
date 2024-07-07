@@ -7,34 +7,13 @@ import config from './config';
 import interceptors from './interceptors';
 import filters from './filters';
 import directives from './directives';
-import {$ionicPlatform, $ionicHistory, $ionicLoading} from './ionic-cordova';
+import {$ionicPlatform, $ionicHistory, $ionicLoading, $ionicModal, md5, moment} from './ionic-cordova';
 import '@uirouter/angularjs';
 import 'ng-cordova';
+import 'lodash';
 
 // app.js
 // angular.module('gastos', ['ui.router'])
-//   .config(function($stateProvider, $urlRouterProvider) {
-//     $stateProvider
-//       .state('home', {
-//         url: '/home',
-//         templateUrl: 'home.html',
-//         controller: 'HomeController'
-//       })
-//       .state('about', {
-//         url: '/about',
-//         templateUrl: 'about.html',
-//         controller: 'AboutController'
-//       });
-
-//     // Configurar la ruta predeterminada
-//     $urlRouterProvider.otherwise('/home');
-//   })
-//   .controller('HomeController', function($scope) {
-//     $scope.message = 'Welcome to Home Page!';
-//   })
-//   .controller('AboutController', function($scope) {
-//     $scope.message = 'This is the About Page!';
-//   });
 
 const app = angular.module('gastos', [
     'ui.router',
@@ -47,128 +26,13 @@ const app = angular.module('gastos', [
     'gastos.directives'
 ]);
 
-// angular.element(document).ready(function() {
-//     angular.bootstrap(document, ['gastos']);
-// });
-
-app.run(function(
-              $state,
-              $rootScope,
-              Auth,
-              $stateParams,
-              $cordovaToast,
-			  NotificacionesService)
-{
-    $state.reload = function reload()
-    {
-        $state.transitionTo($state.current, $stateParams, { reload: true, inherit: true, notify: true });
-    };
-
-	$rootScope.$on('notification',function(data)
-	{
-		alert("RECEIVED PUSH: " + JSON.stringify(data) );
-	});
-
-    $ionicPlatform.ready(function()
-    {
-        NotificacionesService.registerCallbacks();
-
-        // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-        // for form inputs)
-        if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard)
-        {
-            cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-        }
-        if(window.cordova && window.cordova.plugins && window.cordova.plugins.certificates)
-        {
-            cordova.plugins.certificates.trustUnsecureCerts(true);
-        }
-        if (window.StatusBar)
-        {
-            // org.apache.cordova.statusbar required
-            StatusBar.styleDefault();
-        }
-
-        if (Auth.isAuthed())
-        {
-            $state.go('app.home');
-        }
-        else
-        {
-            $state.go('login');
-        }
-
-        document.addEventListener('deviceready', function ()
-        {
-            // Android customization
-            //cordova.plugins.backgroundMode.setDefaults({ text: 'Obteniendo saldo actual...', title: 'CONTROL DE GASTOS'});
-            // Enable background mode
-            //cordova.plugins.backgroundMode.enable();
-        }, false);
-
-        $ionicPlatform.registerBackButtonAction(function(e)
-        {
-            if ($rootScope.backButtonPressedOnceToExit)
-            {
-                ionic.Platform.exitApp();
-            }
-            else if ($state.current.name !== 'app.home')
-            {
-                $ionicHistory.goBack();
-            }
-            else
-            {
-                $rootScope.backButtonPressedOnceToExit = true;
-                $cordovaToast.show('Presione nuevamente para salir...', 'short', 'center');
-
-                setTimeout(function()
-                {
-                    $rootScope.backButtonPressedOnceToExit = false;
-                }, 2000);
-            }
-
-            e.preventDefault();
-            return false;
-        }, 101);
-    });
-
-    $rootScope.$on('unauthorized', function() {
-        $state.go('login');
-    });
-
-    $rootScope.$on('loading:show', function() {
-        $ionicLoading.show({
-            template: 'Aguarde...',
-            animation: 'fade-in'
-        });
-    });
-
-    $rootScope.$on('loading:hide', function() {
-        $ionicLoading.hide();
-    });
-
-    $ionicPlatform.on('resume',function(){ $rootScope.refreshSaldo(); });
-})
-
-// .config(function($ionicConfigProvider)
-// {
-//     $ionicConfigProvider.scrolling.jsScrolling(false);
-// })
-
-// .config(function(multiselectProvider) {
-//     multiselectProvider.setTemplateUrl('templates/Layout/selectTemplate.html');
-//     multiselectProvider.setModalTemplateUrl('lib/ionic-multiselect/dist/templates/modal-template.html');
-// })
-
-.config(function($stateProvider, $urlRouterProvider) {
-
+app.config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
-
     .state('app', {
-    url: '/app',
-    abstract: true,
-    templateUrl: 'templates/menu.html',
-    controller: 'AppCtrl'
+        url: '/app',
+        abstract: true,
+        templateUrl: 'templates/menu.html',
+        controller: 'AppCtrl'
     })
 
     .state('login', {
@@ -242,13 +106,137 @@ app.run(function(
           controller: 'PorCategoriasCtrl'
         }
       }
-  });
-})
+  })
+      .state('about', {
+        url: '/about',
+        templateUrl: 'about.html',
+        controller: 'AboutController'
+      });
 
-.config(function($httpProvider) {
-    // El orden en que se registran es el orden en el cual se encadenan
-    //$httpProvider.interceptors.push('CheckNetworkInterceptor');
-    $httpProvider.interceptors.push('LoadingInterceptor');
-    $httpProvider.interceptors.push('sessionInjector');
-    $httpProvider.interceptors.push('QueryLogDetectionInjector');
-});
+    // Configurar la ruta predeterminada
+    $urlRouterProvider.otherwise('/app/home');
+  })
+  .controller('AboutController', function($scope) {
+    $scope.message = 'This is tghe About Page!';
+  });
+
+
+
+// app.run(function(
+//               $state,
+//               $rootScope,
+//               Auth,
+//               $stateParams,
+//               $cordovaToast,
+// 			  NotificacionesService)
+// {
+//     $state.reload = function reload()
+//     {
+//         $state.transitionTo($state.current, $stateParams, { reload: true, inherit: true, notify: true });
+//     };
+
+// 	$rootScope.$on('notification',function(data)
+// 	{
+// 		alert("RECEIVED PUSH: " + JSON.stringify(data) );
+// 	});
+
+//     $ionicPlatform.ready(function()
+//     {
+//         NotificacionesService.registerCallbacks();
+
+//         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+//         // for form inputs)
+//         if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard)
+//         {
+//             cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+//         }
+//         if(window.cordova && window.cordova.plugins && window.cordova.plugins.certificates)
+//         {
+//             cordova.plugins.certificates.trustUnsecureCerts(true);
+//         }
+//         if (window.StatusBar)
+//         {
+//             // org.apache.cordova.statusbar required
+//             StatusBar.styleDefault();
+//         }
+
+//         if (Auth.isAuthed())
+//         {
+//             $state.go('app.home');
+//         }
+//         else
+//         {
+//             $state.go('login');
+//         }
+
+//         document.addEventListener('deviceready', function ()
+//         {
+//             // Android customization
+//             //cordova.plugins.backgroundMode.setDefaults({ text: 'Obteniendo saldo actual...', title: 'CONTROL DE GASTOS'});
+//             // Enable background mode
+//             //cordova.plugins.backgroundMode.enable();
+//         }, false);
+
+//         $ionicPlatform.registerBackButtonAction(function(e)
+//         {
+//             if ($rootScope.backButtonPressedOnceToExit)
+//             {
+//                 ionic.Platform.exitApp();
+//             }
+//             else if ($state.current.name !== 'app.home')
+//             {
+//                 $ionicHistory.goBack();
+//             }
+//             else
+//             {
+//                 $rootScope.backButtonPressedOnceToExit = true;
+//                 $cordovaToast.show('Presione nuevamente para salir...', 'short', 'center');
+
+//                 setTimeout(function()
+//                 {
+//                     $rootScope.backButtonPressedOnceToExit = false;
+//                 }, 2000);
+//             }
+
+//             e.preventDefault();
+//             return false;
+//         }, 101);
+//     });
+
+//     $rootScope.$on('unauthorized', function() {
+//         $state.go('login');
+//     });
+
+//     $rootScope.$on('loading:show', function() {
+//         $ionicLoading.show({
+//             template: 'Aguarde...',
+//             animation: 'fade-in'
+//         });
+//     });
+
+//     $rootScope.$on('loading:hide', function() {
+//         $ionicLoading.hide();
+//     });
+
+//     $ionicPlatform.on('resume',function(){ $rootScope.refreshSaldo(); });
+// })
+
+// // .config(function($ionicConfigProvider)
+// // {
+// //     $ionicConfigProvider.scrolling.jsScrolling(false);
+// // })
+
+// // .config(function(multiselectProvider) {
+// //     multiselectProvider.setTemplateUrl('templates/Layout/selectTemplate.html');
+// //     multiselectProvider.setModalTemplateUrl('lib/ionic-multiselect/dist/templates/modal-template.html');
+// // })
+
+
+
+// .config(function($httpProvider) {
+//     // El orden en que se registran es el orden en el cual se encadenan
+//     //$httpProvider.interceptors.push('CheckNetworkInterceptor');
+//     $httpProvider.interceptors.push('LoadingInterceptor');
+//     $httpProvider.interceptors.push('sessionInjector');
+//     $httpProvider.interceptors.push('QueryLogDetectionInjector');
+// });

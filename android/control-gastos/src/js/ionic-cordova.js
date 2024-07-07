@@ -5,5 +5,8 @@ module.exports = {
         on: () => {}
     },
     $ionicLoading: {},
-    $ionicHistory: {}
+    $ionicHistory: {},
+    $ionicModal: {},
+    moment: {},
+    $ionicPopup: {}
 };

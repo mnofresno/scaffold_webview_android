@@ -1,8 +1,8 @@
+
 angular.module('gastos.controllers', [])
 
 .controller('AppCtrl', function($scope,
                                 $state,
-                                $ionicModal,
                                 $timeout,
                                 PosicionService,
                                 Gasto,
@@ -12,8 +12,6 @@ angular.module('gastos.controllers', [])
                                 Auth,
                                 MensajesService,
                                 $localStorage,
-                                lodash,
-                                $ionicPopup,
                                 $rootScope,
                                 NotificacionesService,
                                 QrScanner,
@@ -97,7 +95,7 @@ angular.module('gastos.controllers', [])
     NotificacionesService.setNotificationCallback(function(data){ if(data === 'update_saldo') ViewModel.getSaldo(); });
 })
 
-.controller('ConfiguracionCtrl', function($scope, $ionicModal, ApiEndPoint, $localStorage, Categoria, lodash, $ionicPopup)
+.controller('ConfiguracionCtrl', function($scope, ApiEndPoint, $localStorage, Categoria)
 {
     var ViewModel = $scope.viewModel =
         {
@@ -191,7 +189,7 @@ angular.module('gastos.controllers', [])
     initialize();
 })
 
-.controller('PosicionCtrl', function($scope, $ionicModal, Gasto)
+.controller('PosicionCtrl', function($scope, Gasto)
 {
     var ViewModel = $scope.viewModel = {};
     ViewModel.ventana = $scope.ventana;
@@ -227,7 +225,6 @@ angular.module('gastos.controllers', [])
                                           Gasto,
                                           Auth,
                                           Mapper,
-                                          $ionicModal,
                                           $rootScope,
                                           ScreenOrientation,
                                           lodash)
@@ -627,7 +624,7 @@ angular.module('gastos.controllers', [])
     };
 })
 
-.controller('OfflineCtrl', function($localStorage, Mapper, $scope, lodash, Categoria)
+.controller('OfflineCtrl', function($localStorage, Mapper, $scope, Categoria)
 {
     var ViewModel = $scope.viewModel = {};
 
@@ -689,7 +686,7 @@ angular.module('gastos.controllers', [])
     };
 })
 
-.controller('PorCategoriasCtrl', function($http, Mapper, $scope, ApiEndPoint, lodash, Gasto)
+.controller('PorCategoriasCtrl', function($http, Mapper, $scope, ApiEndPoint, Gasto)
 {
     $scope.listado = {};
     $scope.mesActual = 0;
