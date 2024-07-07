@@ -36,7 +36,11 @@ module.exports = (env, argv) => {
             }),
             new CopyWebpackPlugin({
                 patterns: [
-                    { from: path.resolve(__dirname, 'dist'), to: path.resolve(__dirname, 'android/src/main/assets') }
+                    {
+                        from: path.resolve(__dirname, 'dist'),
+                        to: path.resolve(__dirname, 'android/src/main/assets'),
+                        noErrorOnMissing: true
+                    }
                 ]
             })
         ],
