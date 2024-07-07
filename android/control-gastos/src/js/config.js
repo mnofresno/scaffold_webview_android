@@ -4,28 +4,28 @@ angular.module('gastos.config', [])
 {
     var defaults = {
         apiEndpoint: {// produccion: 'http://localhost:8000/api/',
-        produccion: 'https://gastos.catalisis.com.ar/api/',
+        produccion: 'https://gastos.fresno.ar/api/',
                        testing:    'http://localhost:8192/api/',},
         dev: false,
         camera: {
             quality: 100
         }
     };
-    
+
     var storedConfig = $localStorage.get('configuracion');
 
     var configs = {};
-    
+
     if(storedConfig)
     {
         configs = storedConfig;
-    }    
+    }
     else
     {
         configs = defaults;
         $localStorage.set('configuracion', configs)
     }
-    
+
     var outputConfig = {
         apiEndpoint: (function()
         {
@@ -36,8 +36,8 @@ angular.module('gastos.config', [])
             return configs.dev;
         })()
     };
-    
+
     outputConfig.defaults = defaults;
-    
+
     return outputConfig;
 });
