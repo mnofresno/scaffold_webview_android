@@ -16,13 +16,14 @@ $dark:                            #444 !default;
 */
 
 // The path for our ionicons font files, relative to the built CSS in www/css
-$ionicons-font-path: "../lib/ionic/fonts" !default;
-$fa-font-path:  "../lib/font-awesome/fonts" !default;
+$ionicons-font-path: "fonts" !default;
+$fa-font-path:  "fonts" !default;
 
 // Include all of Ionic
 @import '~@ionic/angular/css/core.css';
 @import "listaDinamica";
 @import '~@fortawesome/fontawesome-free/scss/fontawesome.scss';
+@import "legacy_polyfill";
 
 .custom-select{
     background-color: white;
