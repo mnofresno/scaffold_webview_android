@@ -562,7 +562,7 @@ angular.module('gastos.controllers', [])
     };
 })
 
-.controller('LoginCtrl', function($scope, $state, Auth, $gastosPopup, $ionicViewService) {
+.controller('LoginCtrl', function($scope, $state, Auth) {
      var ViewModel = $scope.viewModel =
         {
             usuario: {

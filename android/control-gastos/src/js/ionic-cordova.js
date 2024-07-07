@@ -8,5 +8,7 @@ module.exports = {
     $ionicHistory: {},
     $ionicModal: {},
     moment: {},
-    $ionicPopup: {}
+    $ionicPopup: {},
+    $gastosPopup: {},
+    $ionicViewService: {}
 };

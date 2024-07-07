@@ -7,7 +7,7 @@ import config from './config';
 import interceptors from './interceptors';
 import filters from './filters';
 import directives from './directives';
-import {$ionicPlatform, $ionicHistory, $ionicLoading, $ionicModal, md5, moment} from './ionic-cordova';
+import {$ionicPlatform, $ionicHistory, $ionicViewService, $ionicLoading, $ionicModal, md5, moment} from './ionic-cordova';
 import '@uirouter/angularjs';
 import 'ng-cordova';
 import 'lodash';
@@ -113,14 +113,15 @@ app.config(function($stateProvider, $urlRouterProvider) {
         controller: 'AboutController'
       });
 
-    // Configurar la ruta predeterminada
-    $urlRouterProvider.otherwise('/app/home');
+    $urlRouterProvider.otherwise('/login');
   })
   .controller('AboutController', function($scope) {
     $scope.message = 'This is tghe About Page!';
   });
 
-
+app.run(function() {
+    console.log("run");
+})
 
 // app.run(function(
 //               $state,

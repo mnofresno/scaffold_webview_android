@@ -23,7 +23,7 @@ $fa-font-path:  "fonts" !default;
 @import '~@ionic/angular/css/core.css';
 @import "listaDinamica";
 @import '~@fortawesome/fontawesome-free/scss/fontawesome.scss';
-@import "legacy_polyfill";
+@import "ionic.app.css";
 
 .custom-select{
     background-color: white;
