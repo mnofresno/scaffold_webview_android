@@ -1,3 +1,5 @@
+// import 'popup';
+
 module.exports = {
     $ionicPlatform: {
         ready: () => {},
@@ -8,7 +10,6 @@ module.exports = {
     $ionicHistory: {},
     $ionicModal: {},
     moment: {},
-    $ionicPopup: {},
     $gastosPopup: {},
     $ionicViewService: {}
 };

@@ -562,7 +562,7 @@ angular.module('gastos.controllers', [])
     };
 })
 
-.controller('LoginCtrl', function($scope, $state, Auth) {
+.controller('LoginCtrl', function($scope, $state, Auth, $gastosPopup) {
      var ViewModel = $scope.viewModel =
         {
             usuario: {
@@ -616,7 +616,10 @@ angular.module('gastos.controllers', [])
                         disableBack: true
                     });
                 }, function(response) {
-                    $gastosPopup.error({ template: response.data.error.description });
+                    const message = response.data
+                        ? response.data.error.description
+                        : 'Login error';
+                    $gastosPopup.error({ template: message });
                 });
             }
         }

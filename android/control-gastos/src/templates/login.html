@@ -1,27 +1,23 @@
-<ion-view>
-    <div class="bar bar-header bar-energized">
-        <h2 class="title"><strong>Control de gastos del hogar</strong></h2>
-    </div>
-    
-    <ion-content padding="10" class="has-header">
-        
-        <form ng-submit="viewModel.login(viewModel.errorLogin)">
-        <div ng-app>
-         </div>
-            
-            <div class="list" ng-if="viewModel.mostrarFormulario()">
-                <label class="item item-input"><span class="input-label">Usuario/E-mail:</span> 
-                    <input type="text" ng-model="viewModel.usuario.nombre"/>
-                </label>
-                <label class="item item-input"><span class="input-label">Clave:</span> 
-                    <input type="password" ng-model="viewModel.usuario.clave" />
-                </label>
-            </div>
-            <div class="list" ng-if="!viewModel.mostrarFormulario()">
-            <span  style="color: red;"><strong>ERROR AL INICIAR SESION</strong></span>
-            </div>
-            
-            <button class="button button-block button-positive" type="submit" ng-disabled="!viewModel.habilitarLogin()">Aceptar</button>
-        </form>
-    </ion-content>
-</ion-view>
+<!-- templates/login.html -->
+<div class="header">
+    <h2>Control de gastos del hogar</h2>
+</div>
+
+<div class="content">
+    <form ng-submit="viewModel.login(viewModel.errorLogin)">
+        <div class="list" ng-if="viewModel.mostrarFormulario()">
+            <label class="item item-input">
+                <span class="input-label">Usuario/E-mail:</span>
+                <input type="text" ng-model="viewModel.usuario.nombre"/>
+            </label>
+            <label class="item item-input">
+                <span class="input-label">Clave:</span>
+                <input type="password" ng-model="viewModel.usuario.clave"/>
+            </label>
+        </div>
+        <div class="list" ng-if="!viewModel.mostrarFormulario()">
+            <span class="error-message"><strong>ERROR AL INICIAR SESION</strong></span>
+        </div>
+        <button class="button" type="submit" ng-disabled="!viewModel.habilitarLogin()">Aceptar</button>
+    </form>
+</div>
