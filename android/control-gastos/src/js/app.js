@@ -5,11 +5,13 @@ import config from './config';
 import interceptors from './interceptors';
 import filters from './filters';
 import directives from './directives';
-import ionic from './ionic';
+import {$ionicPlatform, $ionicHistory, $ionicLoading} from './ionic-cordova';
 import '@uirouter/angularjs';
+import 'ng-cordova';
 
 const app = angular.module('gastos', [
     'ui.router',
+    'ngCordova',
     'gastos.controllers',
     'gastos.services',
     'gastos.config',
@@ -18,14 +20,16 @@ const app = angular.module('gastos', [
     'gastos.directives'
 ]);
 
-app.run(function($ionicPlatform,
+angular.element(document).ready(function() {
+    angular.bootstrap(document, ['gastos']);
+});
+
+app.run(function(
               $state,
               $rootScope,
               Auth,
-              $ionicLoading,
               $stateParams,
               $cordovaToast,
-              $ionicHistory,
 			  NotificacionesService)
 {
     $state.reload = function reload()
@@ -129,7 +133,7 @@ app.run(function($ionicPlatform,
 //     multiselectProvider.setModalTemplateUrl('lib/ionic-multiselect/dist/templates/modal-template.html');
 // })
 
-.config(['$stateProvider'], function($stateProvider, $urlRouterProvider) {
+.config(function($stateProvider, $urlRouterProvider) {
 
     $stateProvider
 

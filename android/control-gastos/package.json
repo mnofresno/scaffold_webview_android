@@ -36,6 +36,7 @@
     }
   },
   "dependencies": {
+    "@ionic/angular": "^8.2.5",
     "@uirouter/angularjs": "^1.1.0",
     "@uirouter/core": "^6.1.0"
   }
