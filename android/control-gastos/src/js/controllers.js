@@ -110,16 +110,14 @@ angular.module('gastos.controllers', [])
 
 .controller('ConfiguracionCtrl', function($scope, ApiEndPoint, $localStorage, Categoria) {
     var viewModel = $scope.viewModel = {
-        categoriasPosibles: [],
-        config: {
-            saldoAutoRefresh: false,
-            categoriasVisibles: [],
-            apiEndpoint: { produccion: ApiEndPoint.get() }
-        }
+        availableCategorias: [],
+        saldoAutoRefresh: false,
+        categoriasVisibles: [],
+        apiEndpoint: { produccion: ApiEndPoint.get()}
     };
 
     viewModel.cambiarUrl = function() {
-        viewModel.url = viewModel.config.apiEndpoint.produccion;
+        viewModel.url = viewModel.apiEndpoint.produccion;
         $ionicPopup.show({
             template: '<input type="text" ng-model="viewModel.url" autofocus/>',
             title: 'Direccion URL API',
@@ -130,8 +128,7 @@ angular.module('gastos.controllers', [])
                     text: '<b>Aceptar</b>',
                     type: 'button-positive',
                     onTap: function(e) {
-                        viewModel.config.apiEndpoint.produccion = viewModel.url;
-                        viewModel.guardarConfig();
+                        viewModel.apiEndpoint.produccion = viewModel.url;
                     }
                 },
                 {
@@ -143,43 +140,29 @@ angular.module('gastos.controllers', [])
     };
 
     viewModel.guardarConfig = function() {
-        $localStorage.set('configuracion', viewModel.config);
+        viewModel.categoriasVisibles = viewModel.availableCategorias.filter(x => x.seleccionada).map(x => x.id);
+        $localStorage.set('configuracion', viewModel);
     };
 
-    viewModel.toggleCheck = function(c) {
-        if (c.seleccionada) {
-            viewModel.config.categoriasVisibles = viewModel.config.categoriasVisibles.filter(id => id !== c.id);
-        } else {
-            viewModel.config.categoriasVisibles.push(c.id);
-        }
-        c.seleccionada = !c.seleccionada;
-        viewModel.guardarConfig();
+    viewModel.toggleCheck = function(categoria) {
+        categoria.seleccionada = !categoria.seleccionada;
     };
 
     viewModel.toggleSaldoAutoRefresh = function() {
-        viewModel.config.saldoAutoRefresh = !viewModel.config.saldoAutoRefresh;
-        viewModel.guardarConfig();
+        viewModel.saldoAutoRefresh = !viewModel.saldoAutoRefresh;
     };
 
     var leerConfiguracion = function() {
-        viewModel.config = $localStorage.get('configuracion') || viewModel.config;
+        return $localStorage.get('configuracion') || viewModel;
     };
 
     var initialize = function() {
-        // FIXME: Filter by selected categories is broken
-        Categoria.query().then(function(c)
-        {
-            viewModel.categoriasPosibles = c;
+        Categoria.query().then(function(availableCategorias) {
+            viewModel.availableCategorias = availableCategorias;
             var configuracion = leerConfiguracion();
-
-            if(!configuracion || !configuracion.categoriasVisibles)
-            {
-                viewModel.config.categoriasVisibles = lodash.map(c, 'id');
-            }
-            else
-            {
-                viewModel.config.categoriasVisibles = configuracion.categoriasVisibles;
-            }
+            viewModel.categoriasVisibles = !configuracion || !configuracion.categoriasVisibles
+                ? availableCategorias.map(x => x.id)
+                : configuracion.categoriasVisibles;
         });
     };
 
@@ -230,11 +213,10 @@ angular.module('gastos.controllers', [])
 
     var updateCategorias = function()
     {
-        return Categoria.query().then(function(d)
+        return Categoria.query().then(function(categorias)
         {
-            viewModel.categoriasPosibles = d;
-            if(d)
-            {
+            viewModel.availableCategorias = categorias;
+            if(categorias) {
                 viewModel.categoriasSeleccionadas = [];
             }
         });
@@ -450,9 +432,9 @@ angular.module('gastos.controllers', [])
 
     var sincronizarCategorias = function()
     {
-        Categoria.queryFiltered(function(d)
+        Categoria.queryFiltered(function(categorias)
         {
-            // viewModel.categorias = d;
+            viewModel.categorias = categorias;
         }, viewModel.noFiltrarCategorias);
     };
 

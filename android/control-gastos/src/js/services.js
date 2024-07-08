@@ -88,28 +88,26 @@ angular.module('gastos.services', [])
     };
 
     self.categoriasVisibles = function() {
-        if (!self._categorias_visibles) {
-            var configuracion = $localStorage.get('configuracion');
-            self._categorias_visibles = configuracion && configuracion.categoriasVisibles ? configuracion.categoriasVisibles : [];
-        }
-        return self._categorias_visibles;
+        const configuracion = $localStorage.get('configuracion');
+        return configuracion && configuracion.categoriasVisibles
+            ? configuracion.categoriasVisibles
+            : [];
+
     };
 
     self.queryFiltered = function(callback, noFiltrar, forceUpdate)
+    // FIXME: Fix the mechanism to filter configured categories
     {
-        // FIXME: Fix the mechanism to filter configured categories
         const visibles = self.categoriasVisibles();
-        var filterLogic = function(c)
+        const filterLogic = function(categoria)
         {
-            return visibles.length === 0 || visibles.includes(c.id);
+            return visibles.length === 0 || visibles.includes(categoria.id);
         };
 
         self.query(forceUpdate).then(function(categorias)
         {
-            if (!self.categoriasFiltradas) {
-                self.categoriasFiltradas = categorias.filter(filterLogic);
-                callback(noFiltrar ? categorias : self.categoriasFiltradas);
-            }
+            const categoriasFiltradas = categorias.filter(filterLogic);
+            callback(noFiltrar ? categorias : categoriasFiltradas);
         });
     };
 
@@ -280,9 +278,7 @@ angular.module('gastos.services', [])
     {
         var idusuario = usuario.id;
         var idcategoria = categoria.id;
-        // FIXME: Fix the token to assert if the gastos are repeted
-
-        var token = MD5.createHash(usuario.nombre + "." + categoria.titulo + "." + parseFloat(importe));
+        var token = MD5(usuario.nombre + "." + categoria.titulo + "." + parseFloat(importe));
         // $http returns a promise, which has a then function, which also returns a promise
 
 

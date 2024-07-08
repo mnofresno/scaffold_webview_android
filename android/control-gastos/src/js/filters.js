@@ -1,18 +1,29 @@
 angular.module('gastos.filters', [])
 .filter('chunk', function() {
-    return function(input, size) {
-        if (!Array.isArray(input)) {
-            return input;
+    const chunk = (array, size) => {
+        const chunked = [];
+        for (let i = 0; i < array.length; i += size) {
+            chunked.push(array.slice(i, i + size));
         }
-        if (typeof size !== 'number' || size <= 0) {
-            return input;
-        }
+        return chunked;
+    }
 
-        var result = [];
-        for (var i = 0; i < input.length; i += size) {
-            result.push(input.slice(i, i + size));
-        }
-        return result;
+    const memoize = (fn) => {
+        const cache = new Map();
+        return function (...args) {
+            const key = JSON.stringify(args);
+            if (cache.has(key)) {
+                return cache.get(key);
+            }
+            const result = fn(...args);
+            cache.set(key, result);
+            return result;
+        };
+    }
+    const memoizedChunk = memoize(chunk);
+
+    return (array, size) => {
+        return memoizedChunk(array, size);
     };
 })
 
