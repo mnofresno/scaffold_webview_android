@@ -105,18 +105,9 @@ app.config(function($stateProvider, $urlRouterProvider) {
           controller: 'PorCategoriasCtrl'
         }
       }
-  })
-      .state('about', {
-        url: '/about',
-        templateUrl: 'about.html',
-        controller: 'AboutController'
-      });
-
-    // $urlRouterProvider.otherwise('/login');
-  })
-  .controller('AboutController', function($scope) {
-    $scope.message = 'This is tghe About Page!';
   });
+
+});
 
 app.run(function(
     $state,
@@ -221,7 +212,7 @@ app.run(function(
         $ionicLoading.hide();
     });
 
-    $ionicPlatform.on('resume',function(){ $rootScope.refreshSaldo(); });
+    // $ionicPlatform.on('resume',function(){ $rootScope.refreshSaldo(); });
 })
 
 // // .config(function($ionicConfigProvider)

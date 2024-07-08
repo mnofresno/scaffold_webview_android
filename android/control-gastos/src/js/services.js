@@ -84,26 +84,28 @@ angular.module('gastos.services', [])
         return promise;
     };
 
-    self.categoriasVisibles = function()
-    {
-        var configuracion = $localStorage.get('configuracion');
-
-        return configuracion && configuracion.categoriasVisibles ? configuracion.categoriasVisibles : [];
+    self.categoriasVisibles = function() {
+        if (!self._categorias_visibles) {
+            var configuracion = $localStorage.get('configuracion');
+            self._categorias_visibles = configuracion && configuracion.categoriasVisibles ? configuracion.categoriasVisibles : [];
+        }
+        return self._categorias_visibles;
     };
 
     self.queryFiltered = function(callback, noFiltrar, forceUpdate)
     {
+        const visibles = self.categoriasVisibles();
         var filterLogic = function(c)
         {
-            return self.categoriasVisibles().length === 0 || self.categoriasVisibles().includes(c.id);
+            return visibles.length === 0 || visibles.includes(c.id);
         };
 
         self.query(forceUpdate).then(function(categorias)
         {
-            const categoriasFiltradas = noFiltrar
-                ? categorias
-                : categorias.filter(filterLogic);
-            callback(categoriasFiltradas);
+            if (!self.categoriasFiltradas) {
+                self.categoriasFiltradas = categorias.filter(filterLogic);
+                callback(noFiltrar ? categorias : self.categoriasFiltradas);
+            }
         });
     };
 
@@ -172,7 +174,7 @@ angular.module('gastos.services', [])
             return 0;
         }
 
-        var movimientosPendientes = $localStorage.get('movimientos');
+        var movimientosPendientes = $localStorage.get('movimientos') ?? [];
 
         return movimientosPendientes.length;
     };

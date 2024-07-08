@@ -2,114 +2,123 @@
 angular.module('gastos.controllers', [])
 
 .controller('AppCtrl', function($scope,
-                                $state,
-                                $timeout,
-                                PosicionService,
-                                Gasto,
-                                Categoria,
-                                $q,
-                                SolicitudService,
-                                Auth,
-                                MensajesService,
-                                $localStorage,
-                                $rootScope,
-                                NotificacionesService,
-                                QrScanner,
-                                $http,
-                                ApiEndPoint)
-{
-    var ViewModel = $scope.viewModel = {};
+    $state,
+    $timeout,
+    PosicionService,
+    Gasto,
+    Categoria,
+    $q,
+    SolicitudService,
+    Auth,
+    MensajesService,
+    $localStorage,
+    $rootScope,
+    NotificacionesService,
+    QrScanner,
+    $http,
+    ApiEndPoint) {
+    var viewModel = $scope.viewModel = {isMenuOpen: false};
 
-    ViewModel.mostrarPosicion = function()
-    {
-        PosicionService.show($scope);
-    };
-
-    ViewModel.sincronizarTodo = function()
-    {
-        Gasto.sync().then(function()
-        {
-            Categoria.sync().then(function(data)
-            {
-                $state.reload();
-            });
-        });
-    };
-
-    ViewModel.movimientosPendientes = function()
-    {
-        var cantidadPendientes = Gasto.count();
-        return (cantidadPendientes != 0 ? " (" + cantidadPendientes + ")" : "");
-    };
-
-    ViewModel.solicitarResumen = function()
-    {
-        SolicitudService.solicitarResumen(function(data)
-        {
-           $ionicPopup.alert({ title: 'Envío de resumen', template: data.respuesta });
-        });
-    };
-
-    ViewModel.cerrarSesion = function()
-    {
-        Auth.logout();
-    };
-
-    ViewModel.VerMensajesNoLeidos = function()
-    {
-        MensajesService.ObtenerNoLeidos(function(response)
-        {
-            var mensajes = response.data.length > 0 ? lodash.map(response.data, function(m){ return m.mensaje; }) : 'No hay mensajes pendientes no leidos';
-            $ionicPopup.alert({ title: 'Mensajes no leídos', template: mensajes });
-        });
-    };
-
-    ViewModel.saldo = "";
-
-    ViewModel.getSaldo = function()
-    {
-        Gasto.Saldo(function(r)
-        {
-            ViewModel.saldo = "$ " + r.diferencia;
-        });
-    };
-
-    ViewModel.scanQrCode = function()
-    {
-        QrScanner.scan(function(scanResult)
-        {
-            var code = scanResult.text;
-            var loginData = { qrcode: code };
-            var callback = function(response)
-            {
-                var data = response.data;
-                console.debug(data);
-            };
-
-            $http({ url: ApiEndPoint.get() + 'usuario/qrcodelogin', method: 'POST', data: loginData }).then(callback);
-        });
-    };
-
-    $rootScope.refreshSaldo = ViewModel.getSaldo;
-
-    NotificacionesService.setNotificationCallback(function(data){ if(data === 'update_saldo') ViewModel.getSaldo(); });
-})
-
-.controller('ConfiguracionCtrl', function($scope, ApiEndPoint, $localStorage, Categoria)
-{
-    var ViewModel = $scope.viewModel =
-        {
-            categoriasPosibles: [],
-            config: {
-                saldoAutoRefresh: false,
-                categoriasVisibles: [],
-                apiEndpoint: { produccion: ApiEndPoint.get() }
-            }
+    function initialize() {
+        viewModel.mostrarPosicion = function() {
+            PosicionService.show($scope);
         };
 
-    ViewModel.cambiarUrl = function()
-    {
-        ViewModel.url = ViewModel.config.apiEndpoint.produccion;
+        viewModel.navigate = function(state) {
+            viewModel.isMenuOpen = false;
+            $state.go(state);
+        };
+        document.addEventListener('click', function(event) {
+            var menuElement = document.querySelector('.menu-container');
+            if (viewModel.isMenuOpen && !menuElement.contains(event.target)) {
+                $scope.$apply(function() {
+                    viewModel.isMenuOpen = false;
+                });
+            }
+        });
+
+        viewModel.toggleMenu = function(event) {
+            $scope.viewModel.isMenuOpen = !$scope.viewModel.isMenuOpen;
+            event.stopPropagation();
+        };
+
+        viewModel.sincronizarTodo = function() {
+            Gasto.sync().then(function() {
+                Categoria.sync().then(function(data) {
+                    $state.reload();
+                });
+            });
+        };
+
+        viewModel.movimientosPendientes = function() {
+            var cantidadPendientes = Gasto.count();
+            return (cantidadPendientes !== 0 ? " (" + cantidadPendientes + ")" : "");
+        };
+
+        viewModel.solicitarResumen = function() {
+            SolicitudService.solicitarResumen(function(data) {
+                $ionicPopup.alert({ title: 'Envío de resumen', template: data.respuesta });
+            });
+        };
+
+        viewModel.cerrarSesion = function() {
+            Auth.logout();
+        };
+
+        viewModel.VerMensajesNoLeidos = function() {
+            MensajesService.ObtenerNoLeidos(function(response) {
+                var mensajes = response.data.length > 0 ? lodash.map(response.data, function(m) { return m.mensaje; }) : 'No hay mensajes pendientes no leidos';
+                $ionicPopup.alert({ title: 'Mensajes no leídos', template: mensajes });
+            });
+        };
+
+        viewModel.saldo = "";
+
+        viewModel.getSaldo = function() {
+            Gasto.Saldo(function(r) {
+                $scope.$applyAsync(function() {
+                    viewModel.saldo = "$ " + r.diferencia;
+                });
+            });
+        };
+        $rootScope.refreshSaldo = viewModel.getSaldo;
+
+        viewModel.scanQrCode = function() {
+            QrScanner.scan(function(scanResult) {
+                var code = scanResult.text;
+                var loginData = { qrcode: code };
+                var callback = function(response) {
+                    var data = response.data;
+                    console.debug(data);
+                };
+
+                $http({ url: ApiEndPoint.get() + 'usuario/qrcodelogin', method: 'POST', data: loginData }).then(callback);
+            });
+        };
+
+        NotificacionesService.setNotificationCallback(function(data) {
+            if (data === 'update_saldo') $scope.$applyAsync(viewModel.getSaldo);
+        });
+    }
+
+    if (window.cordova) {
+        document.addEventListener('deviceready', initialize, false);
+    } else {
+        angular.element(document).ready(initialize);
+    }
+})
+.controller('ConfiguracionCtrl', function($scope, ApiEndPoint, $localStorage, Categoria) {
+    var viewModel = $scope.viewModel = {
+        categoriasPosibles: [],
+        config: {
+            saldoAutoRefresh: false,
+            categoriasVisibles: [],
+            apiEndpoint: { produccion: ApiEndPoint.get() }
+        }
+    };
+
+    viewModel.cambiarUrl = function() {
+        viewModel.url = viewModel.config.apiEndpoint.produccion;
         $ionicPopup.show({
             template: '<input type="text" ng-model="viewModel.url" autofocus/>',
             title: 'Direccion URL API',
@@ -119,10 +128,9 @@ angular.module('gastos.controllers', [])
                 {
                     text: '<b>Aceptar</b>',
                     type: 'button-positive',
-                    onTap: function(e)
-                    {
-                        ViewModel.config.apiEndpoint.produccion = ViewModel.url;
-                        ViewModel.guardarConfig();
+                    onTap: function(e) {
+                        viewModel.config.apiEndpoint.produccion = viewModel.url;
+                        viewModel.guardarConfig();
                     }
                 },
                 {
@@ -133,86 +141,78 @@ angular.module('gastos.controllers', [])
         });
     };
 
-    ViewModel.guardarConfig = function()
-    {
-        $localStorage.set('configuracion', ViewModel.config);
+    viewModel.guardarConfig = function() {
+        $localStorage.set('configuracion', viewModel.config);
     };
 
-    ViewModel.categoriaSeleccionada = function(c)
-    {
-        return ViewModel.config.categoriasVisibles.includes(c.id);
+    viewModel.categoriaSeleccionada = function(c) {
+        return lodash.includes(viewModel.config.categoriasVisibles, c.id);
     };
 
-    ViewModel.toggleCheck = function(c)
-    {
-        if(ViewModel.categoriaSeleccionada(c))
-        {
-            lodash.pull(ViewModel.config.categoriasVisibles, c.id);
+    viewModel.toggleCheck = function(c) {
+        if (viewModel.categoriaSeleccionada(c)) {
+            lodash.pull(viewModel.config.categoriasVisibles, c.id);
+        } else {
+            viewModel.config.categoriasVisibles.push(c.id);
         }
-        else
-        {
-            ViewModel.config.categoriasVisibles.push(c.id);
-        }
-        ViewModel.guardarConfig();
+        viewModel.guardarConfig();
     };
 
-    ViewModel.toggleSaldoAutoRefresh = function()
-    {
-        ViewModel.config.saldoAutoRefresh = ViewModel.config.saldoAutoRefresh !== true;
-        ViewModel.guardarConfig();
+    viewModel.toggleSaldoAutoRefresh = function() {
+        viewModel.config.saldoAutoRefresh = viewModel.config.saldoAutoRefresh !== true;
+        viewModel.guardarConfig();
     };
 
-    var leerConfiguracion = function()
-    {
-        ViewModel.config = $localStorage.get('configuracion');
-        return ViewModel.config;
+    var leerConfiguracion = function() {
+        viewModel.config = $localStorage.get('configuracion');
+        return viewModel.config;
     };
 
-    var initialize = function()
-    {
-        Categoria.query().then(function(c)
-        {
-            ViewModel.categoriasPosibles = c;
+    var initialize = function() {
+        Categoria.query().then(function(c) {
+            viewModel.categoriasPosibles = c;
             var configuracion = leerConfiguracion();
-
-            if(!configuracion || !configuracion.categoriasVisibles)
-            {
-                ViewModel.config.categoriasVisibles = lodash.map(c, 'id');
-            }
-            else
-            {
-                ViewModel.config.categoriasVisibles = configuracion.categoriasVisibles;
+            debugger;
+            if (!configuracion || !configuracion.categoriasVisibles) {
+                viewModel.config.categoriasVisibles = c.map(x => x.id);
+            } else {
+                viewModel.config.categoriasVisibles = configuracion.categoriasVisibles;
             }
         });
     };
 
-    initialize();
+
+    if (window.cordova) {
+        document.addEventListener('deviceready', initialize, false);
+    } else {
+        angular.element(document).ready(initialize);
+    }
 })
 
 .controller('PosicionCtrl', function($scope, Gasto)
 {
-    var ViewModel = $scope.viewModel = {};
-    ViewModel.ventana = $scope.ventana;
-    ViewModel.incluirTarjeta = false;
+    var viewModel = $scope.viewModel = {};
+    viewModel.ventana = $scope.ventana;
+    viewModel.incluirTarjeta = false;
 
-    ViewModel.mensajeRegistro = $scope.mensajeRegistro;
+    viewModel.mensajeRegistro = $scope.mensajeRegistro;
 
-    ViewModel.loadResumen = function()
+    viewModel.loadResumen = function()
     {
-      Gasto.Resumen(ViewModel.incluirTarjeta).then(function(respuesta)
+      Gasto.Resumen(viewModel.incluirTarjeta).then(function(respuesta)
       {
           if(respuesta && respuesta.resumen && respuesta.resumen.totalAjeno)
           {
-              ViewModel.resumen = respuesta.resumen;
-              ViewModel.mostrarResumen = ViewModel.resumen !== undefined;
+              viewModel.resumen = respuesta.resumen;
+              viewModel.mostrarResumen = viewModel.resumen !== undefined;
           }
       });
     };
 
-    ViewModel.loadResumen();
-    ViewModel.resultIcon = function()
+    viewModel.loadResumen();
+    viewModel.resultIcon = function()
     {
-        var val = parseInt((ViewModel.resumen.diferencia ? ViewModel.resumen.diferencia : "0").replace(",", "."));
+        var val = parseInt((viewModel.resumen.diferencia ? viewModel.resumen.diferencia : "0").replace(",", "."));
         return { 'fa-thumbs-o-down': val < 0, 'fa-thumbs-o-up': val >= 0 };
     };
 })
@@ -226,16 +226,16 @@ angular.module('gastos.controllers', [])
                                           ScreenOrientation,
                                           lodash)
 {
-    var ViewModel = $scope.viewModel = { enableFilters: false };
+    var viewModel = $scope.viewModel = { enableFilters: false };
 
     var updateCategorias = function()
     {
         return Categoria.query().then(function(d)
         {
-            ViewModel.categoriasPosibles = d;
+            viewModel.categoriasPosibles = d;
             if(d)
             {
-                ViewModel.categoriasSeleccionadas = [];
+                viewModel.categoriasSeleccionadas = [];
             }
         });
     };
@@ -244,10 +244,10 @@ angular.module('gastos.controllers', [])
     {
         return Gasto.queryMeses().then(function(d)
         {
-            ViewModel.mesesPosibles = d;
+            viewModel.mesesPosibles = d;
             if(d)
             {
-                ViewModel.mesSeleccionado = d[0];
+                viewModel.mesSeleccionado = d[0];
             }
         });
     };
@@ -256,15 +256,15 @@ angular.module('gastos.controllers', [])
     {
         return Gasto.tiposMovimientos().then(function(d)
         {
-            ViewModel.tiposMovimientosPosibles = d;
+            viewModel.tiposMovimientosPosibles = d;
             if(d)
             {
-                ViewModel.tipoMovimientoSeleccionado = d[0];
+                viewModel.tipoMovimientoSeleccionado = d[0];
             }
         });
     };
 
-    ViewModel.getDetalleMovimiento = function(movimiento)
+    viewModel.getDetalleMovimiento = function(movimiento)
     {
         Gasto.get(movimiento.id).then(function(m)
         {
@@ -282,20 +282,20 @@ angular.module('gastos.controllers', [])
         });
     };
 
-    ViewModel.cambioCategoria = function(value)
+    viewModel.cambioCategoria = function(value)
     {
-        ViewModel.categoriasSeleccionadas = value;
-        ViewModel.cambioFiltro();
+        viewModel.categoriasSeleccionadas = value;
+        viewModel.cambioFiltro();
     };
 
-    ViewModel.cambioFiltro = function()
+    viewModel.cambioFiltro = function()
     {
-        var mesId = (ViewModel.mesSeleccionado ? ViewModel.mesSeleccionado.mes : null);
-        var catsIds = lodash.map(ViewModel.categoriasSeleccionadas, function(cat)
+        var mesId = (viewModel.mesSeleccionado ? viewModel.mesSeleccionado.mes : null);
+        var catsIds = lodash.map(viewModel.categoriasSeleccionadas, function(cat)
         {
             return cat.id;
         });
-        var movId = (ViewModel.tipoMovimientoSeleccionado ? ViewModel.tipoMovimientoSeleccionado.id : null);
+        var movId = (viewModel.tipoMovimientoSeleccionado ? viewModel.tipoMovimientoSeleccionado.id : null);
 
         Gasto.query({   mes       : mesId,
                         categorias: catsIds,
@@ -311,17 +311,17 @@ angular.module('gastos.controllers', [])
                                 tarjeta_credito: 'Gasto c/Tarjeta'
                             };
                             var mapper = Mapper.mapWithColumns('list', colMapping, false);
-                            ViewModel.Movimientos = mapper(d);
-                            ViewModel.total = d.total;
+                            viewModel.Movimientos = mapper(d);
+                            viewModel.total = d.total;
                         }).finally(function()
                         {
                             $scope.$broadcast('scroll.refreshComplete');
                         });
     };
 
-    ViewModel.actualizarMovimientos = function()
+    viewModel.actualizarMovimientos = function()
     {
-        ViewModel.cambioFiltro();
+        viewModel.cambioFiltro();
     };
 
     var initialize = function()
@@ -331,8 +331,8 @@ angular.module('gastos.controllers', [])
                 .then(updateTiposMovimientos)
                     .then(function()
                     {
-                        ViewModel.enableFilters = true;
-                        ViewModel.actualizarMovimientos();
+                        viewModel.enableFilters = true;
+                        viewModel.actualizarMovimientos();
                     });
     };
 
@@ -343,9 +343,9 @@ angular.module('gastos.controllers', [])
                                             Gasto)
 {
 
-    var ViewModel = $scope.viewModel = {};
+    var viewModel = $scope.viewModel = {};
 
-    Gasto.mensuales().then(function(d){        ViewModel.listado = d;    });
+    Gasto.mensuales().then(function(d){        viewModel.listado = d;    });
 })
 
 .controller('ReintegroCtrl', function($scope,
@@ -355,7 +355,7 @@ angular.module('gastos.controllers', [])
                                       PosicionService)
 {
 
-    var ViewModel = $scope.viewModel = {
+    var viewModel = $scope.viewModel = {
                                             usuarioDestino:         {id: 0, name: ''},
                                             usuario:                 Auth.get(),
                                             importeReintegro:        '',
@@ -363,65 +363,69 @@ angular.module('gastos.controllers', [])
                                             soloEnviarMensaje: false
                                         };
 
-    ViewModel.registrar = function()
+    viewModel.registrar = function()
     {
         Reintegro.Registrar({
-                                importe:           ViewModel.importeReintegro,
-                                originante:        ViewModel.usuario.id,
-                                destinatario:      ViewModel.usuarioDestino.id,
-                                comentario:        ViewModel.comentarioReintegro,
-                                soloEnviarMensaje: ViewModel.soloEnviarMensaje
+                                importe:           viewModel.importeReintegro,
+                                originante:        viewModel.usuario.id,
+                                destinatario:      viewModel.usuarioDestino.id,
+                                comentario:        viewModel.comentarioReintegro,
+                                soloEnviarMensaje: viewModel.soloEnviarMensaje
                             }).then(function(respuesta){
                     if(respuesta && respuesta.logout == "1")
                     {
                         Auth.logout();
                         location.href = location.origin;
                     }
-                    ViewModel.limpiarFormulario();
+                    viewModel.limpiarFormulario();
                     PosicionService.show($scope, "Se registro el reintegro OK.");
                 });
     };
 
     Usuario.query().then(function(d)
     {
-        ViewModel.posiblesUsuariosDestino = d;
+        viewModel.posiblesUsuariosDestino = d;
         if(d !== undefined)
         {
-            ViewModel.usuarioDestino = d[0];
+            viewModel.usuarioDestino = d[0];
         }
     });
 
-    ViewModel.isValid = function()
+    viewModel.isValid = function()
     {
-        return ViewModel.usuarioDestino.id !== 0 &&
-                ((parseInt(ViewModel.importeReintegro) !== 0 &&
-                !isNaN(ViewModel.importeReintegro) &&
-                ViewModel.importeReintegro !== '' &&
-                ViewModel.importeReintegro !== undefined) || ViewModel.soloEnviarMensaje);
+        return viewModel.usuarioDestino.id !== 0 &&
+                ((parseInt(viewModel.importeReintegro) !== 0 &&
+                !isNaN(viewModel.importeReintegro) &&
+                viewModel.importeReintegro !== '' &&
+                viewModel.importeReintegro !== undefined) || viewModel.soloEnviarMensaje);
     };
 
-    ViewModel.limpiarFormulario = function()
+    viewModel.limpiarFormulario = function()
     {
-        ViewModel.importeReintegro = '';
-        ViewModel.comentarioReintegro = '';
+        viewModel.importeReintegro = '';
+        viewModel.comentarioReintegro = '';
     };
 
     $scope.cambioSoloNotificar = function()
     {
-        if(ViewModel.soloEnviarMensaje) ViewModel.importeReintegro = 0;
+        if(viewModel.soloEnviarMensaje) viewModel.importeReintegro = 0;
     };
 })
 
 .controller('HomeCtrl', function($scope,
                                  $state,
+                                 $rootScope,
                                  Categoria,
                                  Gasto,
                                  Auth,
                                  PosicionService)
 {
 
-    $scope.refreshSaldo();
-    var ViewModel = $scope.viewModel = {
+    if (typeof $rootScope.refreshSaldo === 'function') {
+        $rootScope.refreshSaldo();
+    }
+
+    var viewModel = $scope.viewModel = {
                                             tarjeta_credito:        false,
                                             cuotasTarjeta:          1,
                                             noFiltrarCategorias:    false,
@@ -443,81 +447,81 @@ angular.module('gastos.controllers', [])
 
     var sincronizarCategorias = function()
     {
-        Categoria.queryFiltered(function(d)
+        Categoria.queryFiltered(function(data)
         {
-            ViewModel.categorias = d;
-        }, ViewModel.noFiltrarCategorias);
+            // viewModel.categorias = data;
+        }, viewModel.noFiltrarCategorias);
     };
 
-    ViewModel.hasFilteredCategories = function()
+    viewModel.hasFilteredCategories = function()
     {
         return Categoria.categoriasVisibles().length > 0;
     };
 
-    ViewModel.toggleShowAllCategories = function()
+    viewModel.toggleShowAllCategories = function()
     {
-        ViewModel.noFiltrarCategorias = !ViewModel.noFiltrarCategorias;
-        sincronizarCategorias(ViewModel.noFiltrarCategorias);
+        viewModel.noFiltrarCategorias = !viewModel.noFiltrarCategorias;
+        sincronizarCategorias(viewModel.noFiltrarCategorias);
     };
 
     sincronizarCategorias();
 
-    ViewModel.cerrarPosicion = function()
+    viewModel.cerrarPosicion = function()
     {
         PosicionService.close();
     };
 
-    ViewModel.limpiarFormulario = function()
+    viewModel.limpiarFormulario = function()
     {
-        ViewModel.importeGasto            = "";
-        ViewModel.comentarioGasto       = "";
-        ViewModel.categoriaSeleccionada = {id: '', titulo: ''};
-        ViewModel.tarjeta_credito = false;
+        viewModel.importeGasto            = "";
+        viewModel.comentarioGasto       = "";
+        viewModel.categoriaSeleccionada = {id: '', titulo: ''};
+        viewModel.tarjeta_credito = false;
 
-        if(!ViewModel.registroExitoso)
+        if(!viewModel.registroExitoso)
         {
-            ViewModel.mensajeRegistro = '';
+            viewModel.mensajeRegistro = '';
         }
 
-        ViewModel.registroExitoso = false;
+        viewModel.registroExitoso = false;
 
     };
 
-    ViewModel.abrirListadoGastos = function()
+    viewModel.abrirListadoGastos = function()
     {
         $state.go('listadoGastos');
     };
 
-    ViewModel.realizarReintegro = function()
+    viewModel.realizarReintegro = function()
     {
         $state.go('realizarReintegro');
     };
 
-    ViewModel.cambioSeleccion = function()
+    viewModel.cambioSeleccion = function()
     {
-        console.log(ViewModel.categoriaSeleccionada);
+        console.log(viewModel.categoriaSeleccionada);
     };
 
-    ViewModel.isValid = function()
+    viewModel.isValid = function()
     {
-        var importe = parseFloat(ViewModel.importeGasto);
-        return ViewModel.categoriaSeleccionada.id !== '' && !isNaN(importe) && importe !== 0;
+        var importe = parseFloat(viewModel.importeGasto);
+        return viewModel.categoriaSeleccionada.id !== '' && !isNaN(importe) && importe !== 0;
     };
 
-    ViewModel.hayMensajeRegistro = function()
+    viewModel.hayMensajeRegistro = function()
     {
-        return ViewModel.mensajeRegistro != '';
+        return viewModel.mensajeRegistro != '';
     };
 
-    ViewModel.registrarGasto = function()
+    viewModel.registrarGasto = function()
     {
         Gasto.Registrar(
-          ViewModel.importeGasto,
-          ViewModel.categoriaSeleccionada,
-          ViewModel.usuario,
-          ViewModel.comentarioGasto,
-          ViewModel.tarjeta_credito,
-          ViewModel.cuotasTarjeta)
+          viewModel.importeGasto,
+          viewModel.categoriaSeleccionada,
+          viewModel.usuario,
+          viewModel.comentarioGasto,
+          viewModel.tarjeta_credito,
+          viewModel.cuotasTarjeta)
           .then(function(respuesta)
           {
               if(respuesta.logout == "1")
@@ -545,13 +549,13 @@ angular.module('gastos.controllers', [])
           })
           .finally(function()
           {
-              ViewModel.limpiarFormulario();
+              viewModel.limpiarFormulario();
           });
     };
 })
 
 .controller('LoginCtrl', function($scope, $state, Auth, $gastosPopup) {
-     var ViewModel = $scope.viewModel =
+     var viewModel = $scope.viewModel =
         {
             usuario: {
                         clave: '',
@@ -560,37 +564,37 @@ angular.module('gastos.controllers', [])
             errorLogin: false,
         };
 
-    ViewModel.mostrarFormulario = function()
+    viewModel.mostrarFormulario = function()
     {
-        return !ViewModel.errorLogin;
+        return !viewModel.errorLogin;
     };
 
-    ViewModel.habilitarLogin = function()
+    viewModel.habilitarLogin = function()
     {
-        return ViewModel.usuario.clave != '' && ViewModel.usuario.nombre != '';
+        return viewModel.usuario.clave != '' && viewModel.usuario.nombre != '';
     };
 
     $scope.usuario = {
         legajo: ''
     };
-    ViewModel.limpiarFormulario = function()
+    viewModel.limpiarFormulario = function()
     {
-        ViewModel.errorLogin = false;
-        ViewModel.usuario = {id: '', nombre: '', clave: ''};
+        viewModel.errorLogin = false;
+        viewModel.usuario = {id: '', nombre: '', clave: ''};
         $state.go('login');
     };
 
-    ViewModel.login = function(e) {
+    viewModel.login = function(e) {
 
         if(e)
         {
-            ViewModel.limpiarFormulario();
+            viewModel.limpiarFormulario();
         }
         else
         {
-            if (ViewModel.usuario.nombre != '') {
+            if (viewModel.usuario.nombre != '') {
 
-                Auth.login(ViewModel.usuario).then(function(respuesta) {
+                Auth.login(viewModel.usuario).then(function(respuesta) {
                     if(respuesta)
                     {
                         $state.go('app.home');
@@ -598,7 +602,7 @@ angular.module('gastos.controllers', [])
                     else
                     {
                         Auth.logout();
-                        ViewModel.errorLogin = true;
+                        viewModel.errorLogin = true;
                     }
                     // FIXME: Add mechanism to avoid go back button
                     // $ionicViewService.nextViewOptions({
@@ -618,7 +622,7 @@ angular.module('gastos.controllers', [])
 
 .controller('OfflineCtrl', function($localStorage, Mapper, $scope, Categoria)
 {
-    var ViewModel = $scope.viewModel = {};
+    var viewModel = $scope.viewModel = {};
 
     var categorias = null;
     var movimientos = null;
@@ -632,10 +636,10 @@ angular.module('gastos.controllers', [])
     Categoria.query().then(function(data)
     {
       categorias = data;
-      ViewModel.actualizar();
+      viewModel.actualizar();
     });
 
-    ViewModel.actualizar = function()
+    viewModel.actualizar = function()
     {
         var i = 1;
         var storedData = $localStorage.get('movimientos');
@@ -660,19 +664,19 @@ angular.module('gastos.controllers', [])
                 m.categoriaTitulo =  c.titulo;
             }
         });
-        ViewModel.Movimientos = Mapper.mapWithColumns('M', mapping, false)({ M: movimientos });
-        ViewModel.saveList();
+        viewModel.Movimientos = Mapper.mapWithColumns('M', mapping, false)({ M: movimientos });
+        viewModel.saveList();
     };
 
-    ViewModel.deleteItem = function(item)
+    viewModel.deleteItem = function(item)
     {
       var m = lodash.remove(movimientos, { id: item.id });
 
-      ViewModel.saveList();
-      ViewModel.actualizar();
+      viewModel.saveList();
+      viewModel.actualizar();
     };
 
-    ViewModel.saveList = function()
+    viewModel.saveList = function()
     {
         $localStorage.set('movimientos', movimientos);
     };
