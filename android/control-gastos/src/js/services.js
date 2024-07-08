@@ -1,3 +1,5 @@
+import MD5 from "crypto-js/md5";
+
 angular.module('gastos.services', [])
 
 .service('PosicionService', function(Gasto, $sce)
@@ -82,6 +84,7 @@ angular.module('gastos.services', [])
         }
 
         return promise;
+
     };
 
     self.categoriasVisibles = function() {
@@ -94,6 +97,7 @@ angular.module('gastos.services', [])
 
     self.queryFiltered = function(callback, noFiltrar, forceUpdate)
     {
+        // FIXME: Fix the mechanism to filter configured categories
         const visibles = self.categoriasVisibles();
         var filterLogic = function(c)
         {
@@ -276,9 +280,14 @@ angular.module('gastos.services', [])
     {
         var idusuario = usuario.id;
         var idcategoria = categoria.id;
-        var token = md5.createHash(usuario.nombre + "." + categoria.titulo + "." + parseFloat(importe));
+        // FIXME: Fix the token to assert if the gastos are repeted
+
+        var token = MD5.createHash(usuario.nombre + "." + categoria.titulo + "." + parseFloat(importe));
         // $http returns a promise, which has a then function, which also returns a promise
-        var fechaHoy = moment().format();
+
+
+        var fechaHoy = (new Date()).toLocaleString("sv-SE");;
+
         var gastoActual =     {
                                 importe:         importe,
                                 categoria:       idcategoria,
@@ -357,7 +366,7 @@ angular.module('gastos.services', [])
         return $cordovaNetwork;
     }
 
-    Connection = {
+    var Connection = {
         UNKNOWN:     "unknown",
         ETHERNET:     "ethernet",
         WIFI:         "wifi",

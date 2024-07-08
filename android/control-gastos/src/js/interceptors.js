@@ -3,17 +3,17 @@ angular.module('gastos.interceptors', [])
 .factory('CheckNetworkInterceptor', function($q, $injector, Network) {
     return {
         request: function(config) {
-            
+
             if (config.url.indexOf('templates') === 0) return config;
-            
+
             var deferred = $q.defer();
-            
+
             switch(Network.getNetwork()) {
                 case Connection.ETHERNET:
                 case Connection.WIFI:
                     deferred.resolve(config);
                     break;
-                    
+
                 case Connection.UNKNOWN:
                 case Connection.CELL_2G:
                 case Connection.CELL_3G:
@@ -35,10 +35,10 @@ angular.module('gastos.interceptors', [])
                                 statusText: 'Cancelado por el usuario',
                                 data: 'El usuario ha cancelado la operación'
                             });
-                        }    
+                        }
                     });*/
                     break;
-                
+
                 case Connection.NONE:
                     deferred.reject({
                         status: '500',
@@ -46,8 +46,8 @@ angular.module('gastos.interceptors', [])
                         data: 'No tiene acceso a Internet'
                     });
                     break;
-            }            
-  
+            }
+
             return deferred.promise;
         }
     };
@@ -65,7 +65,7 @@ angular.module('gastos.interceptors', [])
         },
         responseError: function(rejection) {
             $rootScope.$broadcast('loading:hide');
-            
+
             var deferred = $q.defer();
             deferred.reject(rejection);
             return deferred.promise;
@@ -76,13 +76,13 @@ angular.module('gastos.interceptors', [])
 .factory('sessionInjector', function($localStorage, $rootScope, $q)
 {
     var self = this;
-    
+
     var logoutNow = function()
     {
         $localStorage.delete('usuario');
         $rootScope.$broadcast('unauthorized');
     };
-        
+
     self.request = function(config)
     {
         var usuario = $localStorage.get('usuario');
@@ -93,7 +93,7 @@ angular.module('gastos.interceptors', [])
         config.headers['X-Requested-With'] = 'XMLHttpRequest';
         return config;
     };
-    
+
     self.response = function(response)
     {
         if(response.status === 403 || response.status === 401)
@@ -102,7 +102,7 @@ angular.module('gastos.interceptors', [])
         }
         return response;
     };
-        
+
     self.responseError = function(rejection)
     {
         var deferred = $q.defer();
@@ -113,7 +113,7 @@ angular.module('gastos.interceptors', [])
         deferred.reject(rejection);
         return deferred.promise;
     };
-    
+
     return self;
 })
 
@@ -123,7 +123,7 @@ angular.module('gastos.interceptors', [])
         {
             return config;
         },
-        response: function(response) 
+        response: function(response)
         {
             if(response && response.data && response.data.query_log)
             {

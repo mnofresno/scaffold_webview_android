@@ -107,6 +107,7 @@ angular.module('gastos.controllers', [])
         angular.element(document).ready(initialize);
     }
 })
+
 .controller('ConfiguracionCtrl', function($scope, ApiEndPoint, $localStorage, Categoria) {
     var viewModel = $scope.viewModel = {
         categoriasPosibles: [],
@@ -145,42 +146,42 @@ angular.module('gastos.controllers', [])
         $localStorage.set('configuracion', viewModel.config);
     };
 
-    viewModel.categoriaSeleccionada = function(c) {
-        return lodash.includes(viewModel.config.categoriasVisibles, c.id);
-    };
-
     viewModel.toggleCheck = function(c) {
-        if (viewModel.categoriaSeleccionada(c)) {
-            lodash.pull(viewModel.config.categoriasVisibles, c.id);
+        if (c.seleccionada) {
+            viewModel.config.categoriasVisibles = viewModel.config.categoriasVisibles.filter(id => id !== c.id);
         } else {
             viewModel.config.categoriasVisibles.push(c.id);
         }
+        c.seleccionada = !c.seleccionada;
         viewModel.guardarConfig();
     };
 
     viewModel.toggleSaldoAutoRefresh = function() {
-        viewModel.config.saldoAutoRefresh = viewModel.config.saldoAutoRefresh !== true;
+        viewModel.config.saldoAutoRefresh = !viewModel.config.saldoAutoRefresh;
         viewModel.guardarConfig();
     };
 
     var leerConfiguracion = function() {
-        viewModel.config = $localStorage.get('configuracion');
-        return viewModel.config;
+        viewModel.config = $localStorage.get('configuracion') || viewModel.config;
     };
 
     var initialize = function() {
-        Categoria.query().then(function(c) {
+        // FIXME: Filter by selected categories is broken
+        Categoria.query().then(function(c)
+        {
             viewModel.categoriasPosibles = c;
             var configuracion = leerConfiguracion();
-            debugger;
-            if (!configuracion || !configuracion.categoriasVisibles) {
-                viewModel.config.categoriasVisibles = c.map(x => x.id);
-            } else {
+
+            if(!configuracion || !configuracion.categoriasVisibles)
+            {
+                viewModel.config.categoriasVisibles = lodash.map(c, 'id');
+            }
+            else
+            {
                 viewModel.config.categoriasVisibles = configuracion.categoriasVisibles;
             }
         });
     };
-
 
     if (window.cordova) {
         document.addEventListener('deviceready', initialize, false);
@@ -223,8 +224,7 @@ angular.module('gastos.controllers', [])
                                           Auth,
                                           Mapper,
                                           $rootScope,
-                                          ScreenOrientation,
-                                          lodash)
+                                          ScreenOrientation)
 {
     var viewModel = $scope.viewModel = { enableFilters: false };
 
@@ -418,6 +418,7 @@ angular.module('gastos.controllers', [])
                                  Categoria,
                                  Gasto,
                                  Auth,
+                                 $timeout,
                                  PosicionService)
 {
 
@@ -445,11 +446,13 @@ angular.module('gastos.controllers', [])
                                         };
 
 
+    const self = this;
+
     var sincronizarCategorias = function()
     {
-        Categoria.queryFiltered(function(data)
+        Categoria.queryFiltered(function(d)
         {
-            // viewModel.categorias = data;
+            // viewModel.categorias = d;
         }, viewModel.noFiltrarCategorias);
     };
 
@@ -465,6 +468,7 @@ angular.module('gastos.controllers', [])
     };
 
     sincronizarCategorias();
+
 
     viewModel.cerrarPosicion = function()
     {

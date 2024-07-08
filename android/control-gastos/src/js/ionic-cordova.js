@@ -1,7 +1,3 @@
-// import 'popup';
-
-const { includes, filter } = require("lodash");
-
 module.exports = {
     $ionicPlatform: {
         ready: () => {},
@@ -14,7 +10,6 @@ module.exports = {
     },
     $ionicHistory: {},
     $ionicModal: {},
-    moment: {},
     $gastosPopup: {},
     $ionicViewService: {}
 };
