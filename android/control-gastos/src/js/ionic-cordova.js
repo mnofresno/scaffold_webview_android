@@ -6,7 +6,10 @@ module.exports = {
         registerBackButtonAction: () => {},
         on: () => {}
     },
-    $ionicLoading: {},
+    $ionicLoading: {
+        hide: () => {},
+        show: () => {}
+    },
     $ionicHistory: {},
     $ionicModal: {},
     moment: {},

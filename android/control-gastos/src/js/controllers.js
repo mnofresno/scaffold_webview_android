@@ -140,7 +140,7 @@ angular.module('gastos.controllers', [])
 
     ViewModel.categoriaSeleccionada = function(c)
     {
-        return lodash.includes(ViewModel.config.categoriasVisibles, c.id);
+        return ViewModel.config.categoriasVisibles.includes(c.id);
     };
 
     ViewModel.toggleCheck = function(c)
@@ -218,9 +218,6 @@ angular.module('gastos.controllers', [])
 })
 
 .controller('ListadoGastosCtrl', function($scope,
-                                          $ionicHistory,
-                                          $ionicScrollDelegate,
-                                          $state,
                                           Categoria,
                                           Gasto,
                                           Auth,
@@ -343,12 +340,7 @@ angular.module('gastos.controllers', [])
 })
 
 .controller('GastosMensualesCtrl', function($scope,
-                                            $ionicHistory,
-                                            $ionicScrollDelegate,
-                                            $state,
-                                            Categoria,
-                                            Gasto,
-                                            Auth)
+                                            Gasto)
 {
 
     var ViewModel = $scope.viewModel = {};
@@ -357,9 +349,6 @@ angular.module('gastos.controllers', [])
 })
 
 .controller('ReintegroCtrl', function($scope,
-                                      $ionicHistory,
-                                      $ionicScrollDelegate,
-                                      $state,
                                       Auth,
                                       Usuario,
                                       Reintegro,
@@ -424,8 +413,6 @@ angular.module('gastos.controllers', [])
 })
 
 .controller('HomeCtrl', function($scope,
-                                 $ionicHistory,
-                                 $ionicScrollDelegate,
                                  $state,
                                  Categoria,
                                  Gasto,
@@ -548,7 +535,8 @@ angular.module('gastos.controllers', [])
                   PosicionService.show($scope, "Se registro el gasto localmente.");
               }
 
-              $ionicScrollDelegate.scrollTop();
+              // FIXME: Fix scroll delegate
+            //   $ionicScrollDelegate.scrollTop();
           })
           .catch(function(){
 

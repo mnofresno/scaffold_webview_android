@@ -93,14 +93,17 @@ angular.module('gastos.services', [])
 
     self.queryFiltered = function(callback, noFiltrar, forceUpdate)
     {
-        var filter = function(c)
+        var filterLogic = function(c)
         {
-            return self.categoriasVisibles().length === 0 || lodash.includes(self.categoriasVisibles(), c.id);
+            return self.categoriasVisibles().length === 0 || self.categoriasVisibles().includes(c.id);
         };
 
         self.query(forceUpdate).then(function(categorias)
         {
-            callback(lodash.filter(categorias, noFiltrar ? lodash.identity : filter));
+            const categoriasFiltradas = noFiltrar
+                ? categorias
+                : categorias.filter(filterLogic);
+            callback(categoriasFiltradas);
         });
     };
 
@@ -533,7 +536,7 @@ angular.module('gastos.services', [])
     return self;
 })
 
-.service('Mapper', function(lodash)
+.service('Mapper', function()
 {
     var self = this;
 
@@ -574,7 +577,8 @@ angular.module('gastos.services', [])
 
             result.columns = self.getColumns(mapping, visibleByDefault);
 
-            var camposAFiltrar = lodash.filter(Object.keys(mapping), function(campo){ return lodash.find(result.columns, { withFilter: true, id: campo}) !== undefined; });
+            // FIXME: What is doing this here?
+            // var camposAFiltrar = lodash.filter(Object.keys(mapping), function(campo){ return lodash.find(result.columns, { withFilter: true, id: campo}) !== undefined; });
 
             result.filtro = {};
 

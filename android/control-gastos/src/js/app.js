@@ -137,8 +137,7 @@ app.run(function(
 		alert("RECEIVED PUSH: " + JSON.stringify(data) );
 	});
 
-    $ionicPlatform.ready(function()
-    {
+    const initialize = function() {
         NotificacionesService.registerCallbacks();
 
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -166,13 +165,13 @@ app.run(function(
             $state.go('login');
         }
 
-        document.addEventListener('deviceready', function ()
-        {
-            // Android customization
-            //cordova.plugins.backgroundMode.setDefaults({ text: 'Obteniendo saldo actual...', title: 'CONTROL DE GASTOS'});
-            // Enable background mode
-            //cordova.plugins.backgroundMode.enable();
-        }, false);
+        // document.addEventListener('deviceready', function ()
+        // {
+        //     // Android customization
+        //     //cordova.plugins.backgroundMode.setDefaults({ text: 'Obteniendo saldo actual...', title: 'CONTROL DE GASTOS'});
+        //     // Enable background mode
+        //     //cordova.plugins.backgroundMode.enable();
+        // }, false);
 
         $ionicPlatform.registerBackButtonAction(function(e)
         {
@@ -182,7 +181,8 @@ app.run(function(
             }
             else if ($state.current.name !== 'app.home')
             {
-                $ionicHistory.goBack();
+                // FIXME: Fix go back of ionicHistory
+                // $ionicHistory.goBack();
             }
             else
             {
@@ -198,7 +198,13 @@ app.run(function(
             e.preventDefault();
             return false;
         }, 101);
-    });
+    };
+
+    if (window.cordova) {
+        document.addEventListener('deviceready', initialize, false);
+    } else {
+        angular.element(document).ready(initialize);
+    }
 
     $rootScope.$on('unauthorized', function() {
         $state.go('login');
@@ -230,10 +236,10 @@ app.run(function(
 
 
 
-// .config(function($httpProvider) {
-//     // El orden en que se registran es el orden en el cual se encadenan
-//     //$httpProvider.interceptors.push('CheckNetworkInterceptor');
-//     $httpProvider.interceptors.push('LoadingInterceptor');
-//     $httpProvider.interceptors.push('sessionInjector');
-//     $httpProvider.interceptors.push('QueryLogDetectionInjector');
-// });
+.config(function($httpProvider) {
+    // El orden en que se registran es el orden en el cual se encadenan
+    //$httpProvider.interceptors.push('CheckNetworkInterceptor');
+    $httpProvider.interceptors.push('LoadingInterceptor');
+    $httpProvider.interceptors.push('sessionInjector');
+    $httpProvider.interceptors.push('QueryLogDetectionInjector');
+});

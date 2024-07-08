@@ -3,8 +3,9 @@ angular.module('gastos.config', [])
 .service('ENV', function($localStorage)
 {
     var defaults = {
-        apiEndpoint: {// produccion: 'http://localhost:8000/api/',
-        produccion: 'https://gastos.fresno.ar/api/',
+        apiEndpoint: {
+            produccion: 'http://localhost:180/api/',
+        // produccion: 'https://gastos.fresno.ar/api/',
                        testing:    'http://localhost:8192/api/',},
         dev: false,
         camera: {
