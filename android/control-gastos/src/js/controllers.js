@@ -187,7 +187,6 @@ angular.module('gastos.controllers', [])
     viewModel.incluirTarjeta = false;
 
     viewModel.cerrar = function () {
-      console.debug('cerrar');
       if ($scope.viewModel.ventana) {
         $scope.viewModel.ventana.hide();
       }

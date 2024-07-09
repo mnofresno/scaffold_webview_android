@@ -11,7 +11,7 @@ var POPUP_TPL =
         '<h3 class="popup-title" ng-bind="trustedTitle"></h3>' +
         '<h5 class="popup-sub-title" ng-if="subTitle" ng-bind="trustedSubTitle"></h5>' +
       '</div>' +
-      '<div class="popup-body" ng-bind-html="trustedTemplate">' +
+      '<div class="popup-body">' +
       '</div>' +
       '<div class="popup-buttons" ng-show="buttons.length">' +
         '<button ng-repeat="button in buttons" ng-click="$buttonTapped(button, $event)" class="button" ng-class="button.type || \'button-default\'" ng-bind="button.text"></button>' +
@@ -66,8 +66,7 @@ GastosPopupModule.factory('$gastosPopup', [
         cssClass: options.cssClass,
         trustedTitle: $sce.trustAsHtml(options.title),
         trustedSubTitle: $sce.trustAsHtml(options.subTitle),
-        trustedTemplate: $sce.trustAsHtml(options.template),
-        template: options.template,
+        templateUrl: options.templateUrl,
         $buttonTapped: function(button, event) {
           var result = (button.onTap || angular.noop)(event);
           event = event.originalEvent || event; //jquery events
@@ -76,17 +75,24 @@ GastosPopupModule.factory('$gastosPopup', [
           }
         }
       });
-      $q.when(options.templateUrl ? $.get(options.templateUrl) : (options.template || options.content || ''))
-        .then(function(template) {
+
+      if (options.templateUrl) {
+        $.get(options.templateUrl).then(function(template) {
           var popupBody = jqLite(self.element[0].querySelector('.popup-body'));
-          if (template) {
-            self.scope.trustedTemplate = $sce.trustAsHtml(template);
-            popupBody.html(template);  // Insert template HTML
-            $compile(popupBody.contents())(self.scope);  // Compile and link the content
-          } else {
-            popupBody.remove();
-          }
+          self.scope.trustedTemplate = $sce.trustAsHtml(template);
+          popupBody.html(template);  // Insert template HTML
+          $compile(popupBody.contents())(self.scope);  // Compile and link the content
         });
+      } else if (options.template) {
+        var popupBody = jqLite(self.element[0].querySelector('.popup-body'));
+        self.scope.trustedTemplate = $sce.trustAsHtml(options.template);
+        popupBody.html(options.template);  // Insert template HTML
+        $compile(popupBody.contents())(self.scope);  // Compile and link the content
+      } else {
+        var popupBody = jqLite(self.element[0].querySelector('.popup-body'));
+        popupBody.remove();
+      }
+
       self.show = function() {
         if (self.isShown || self.removed) return;
         self.isShown = true;
@@ -97,6 +103,7 @@ GastosPopupModule.factory('$gastosPopup', [
           focusInput(self.element);
         });
       };
+
       self.hide = function(callback) {
         callback = callback || angular.noop;
         if (!self.isShown) return callback();
@@ -105,6 +112,7 @@ GastosPopupModule.factory('$gastosPopup', [
         self.element.addClass('popup-hidden');
         $timeout(callback, 250, false);
       };
+
       self.remove = function() {
         if (self.removed) return;
         self.hide(function() {
@@ -113,6 +121,7 @@ GastosPopupModule.factory('$gastosPopup', [
         });
         self.removed = true;
       };
+
       return self;
     }
 
