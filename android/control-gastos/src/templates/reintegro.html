@@ -1,29 +1,39 @@
 <ion-view>
     <ion-content padding="true" class="has-header">
         <div class="item container">
-                <div ng-if="true">
-                    <h2>Destinatario:</h2>
-                    <center>
-                        <span ng-repeat="usr in viewModel.posiblesUsuariosDestino">
-                            <ion-radio ng-model="viewModel.usuarioDestino" ng-value="usr">{{usr.name}}</ion-radio>
-                        </span>
-                    </center>
+            <div ng-if="true">
+                <h2>Destinatario:</h2>
+                <div class="radio-container">
+                    <span ng-repeat="usr in viewModel.posiblesUsuariosDestino" class="radio-item">
+                        <label class="radio-label">
+                            <input type="radio" ng-model="viewModel.usuarioDestino" ng-value="usr" class="radio-input">
+                            <div class="radio-icon">
+                                <div class="radio-inner"></div>
+                            </div>
+                            {{usr.name}}
+                        </label>
+                    </span>
                 </div>
-                    <div class="col text-center">
-                        <label for="importeReintegro" class="item item-input"><span class="input-label"><strong>Importe:</strong></span>
-                        <input style="font-size:25px; font-family: monospace;" id="importeReintegro" type="number" class = "item text-right item-input" ng-disabled="viewModel.soloEnviarMensaje" ng-model="viewModel.importeReintegro" step="0.01"></label>
-                    </div>
-                    <div class="col text-center">
-                        <label for="comentarioReintegro" class="item item-input"><span class="input-label"><strong>Comentario:</strong></span>
-                        <input style="font-size:25px; font-family: monospace;" id="comentarioReintegro" type="text" class = "item text-right item-input" ng-model="viewModel.comentarioReintegro"></label>
-                    </div>
+            </div>
+            <div class="col text-center">
+                <label for="importeReintegro" class="item item-input">
+                    <span class="input-label"><strong>Importe:</strong></span>
+                    <input style="font-size:25px; font-family: monospace;" id="importeReintegro" type="number" class="item text-right item-input" ng-disabled="viewModel.soloEnviarMensaje" ng-model="viewModel.importeReintegro" step="0.01">
+                </label>
+            </div>
+            <div class="col text-center">
+                <label for="comentarioReintegro" class="item item-input">
+                    <span class="input-label"><strong>Comentario:</strong></span>
+                    <input style="font-size:25px; font-family: monospace;" id="comentarioReintegro" type="text" class="item text-right item-input" ng-model="viewModel.comentarioReintegro">
+                </label>
+            </div>
         </div>
         <div>
             <label>
                 <input type="checkbox" ng-change="cambioSoloNotificar()" ng-model="viewModel.soloEnviarMensaje" ng-true-value="true" ng-false-value="false">
                 Sólo notificar (No registra movimientos)
             </label>
-        <div>
+        </div>
         <div>
             <button ng-disabled="!viewModel.isValid()" ng-click="viewModel.registrar()" class="button button-block button-positive">Registrar</button>
         </div>
@@ -31,6 +41,68 @@
             <button ng-click="viewModel.limpiarFormulario()" class="button button-block button-positive">Limpiar</button>
         </div>
     </ion-content>
-
-
 </ion-view>
+
+<style>
+    .radio-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .radio-item {
+        margin-bottom: 10px;
+    }
+
+    .radio-label {
+        font-size: 18px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        position: relative;
+        padding-left: 35px;
+    }
+
+    .radio-input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .radio-icon {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 20px;
+        width: 20px;
+        background-color: #eee;
+        border-radius: 50%;
+    }
+
+    .radio-label:hover .radio-icon {
+        background-color: #ccc;
+    }
+
+    .radio-input:checked ~ .radio-icon {
+        background-color: #2196F3;
+    }
+
+    .radio-icon:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+
+    .radio-input:checked ~ .radio-icon:after {
+        display: block;
+    }
+
+    .radio-label .radio-icon:after {
+        top: 7px;
+        left: 7px;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: white;
+    }
+</style>

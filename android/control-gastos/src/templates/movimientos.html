@@ -7,15 +7,12 @@
 
         <div class="row">
             <div class="col text-center">
-                <div class="custom-select" style="padding-top: 6px;">
-                    <multiselect
-                        items="viewModel.availableCategorias"
-                        text-property="titulo"
-                        value-property="id"
-                        text="--Categoria--"
-                        value-changed="viewModel.enableFilters && viewModel.cambioCategoria(value)">
-                    </multiselect>
-                </div>
+                <select id="categoriaSelect"
+                    ng-model="viewModel.selectedCategorias"
+                    ng-options="cat.id as cat.titulo for cat in viewModel.availableCategorias"
+                    class="custom-select">
+                    <option value ="">--Categoria--</option>
+                </select>
             </div>
             <div class="col text-center">
                 <select class="custom-select" ng-model="viewModel.mesSeleccionado"
