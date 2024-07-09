@@ -40,6 +40,7 @@ GastosPopupModule.factory('$gastosPopup', [
       },
       confirm: showConfirm,
       prompt: showPrompt,
+      fromTemplateUrl: fromTemplateUrl,  // Añadimos el nuevo método
       _createPopup: createPopup,
       _popupStack: popupStack
     };
@@ -52,15 +53,12 @@ GastosPopupModule.factory('$gastosPopup', [
         title: '',
         buttons: []
       }, options || {});
-
       var self = {};
       self.scope = (options.scope || $rootScope).$new();
       self.element = jqLite(POPUP_TPL);
       self.responseDeferred = $q.defer();
-
       $('body').append(self.element);
       $compile(self.element)(self.scope);
-
       extend(self.scope, {
         title: options.title,
         buttons: options.buttons,
@@ -73,58 +71,48 @@ GastosPopupModule.factory('$gastosPopup', [
         $buttonTapped: function(button, event) {
           var result = (button.onTap || angular.noop)(event);
           event = event.originalEvent || event; //jquery events
-
           if (!event.defaultPrevented) {
             self.responseDeferred.resolve(result);
           }
         }
       });
-
       $q.when(options.templateUrl ? $.get(options.templateUrl) : (options.template || options.content || ''))
-      .then(function(template) {
-        var popupBody = jqLite(self.element[0].querySelector('.popup-body'));
-        if (template) {
-          self.scope.trustedTemplate = $sce.trustAsHtml(template);
-          $compile(popupBody.contents())(self.scope);
-        } else {
-          popupBody.remove();
-        }
-      });
-
+        .then(function(template) {
+          var popupBody = jqLite(self.element[0].querySelector('.popup-body'));
+          if (template) {
+            self.scope.trustedTemplate = $sce.trustAsHtml(template);
+            popupBody.html(template);  // Insert template HTML
+            $compile(popupBody.contents())(self.scope);  // Compile and link the content
+          } else {
+            popupBody.remove();
+          }
+        });
       self.show = function() {
         if (self.isShown || self.removed) return;
-
         self.isShown = true;
         requestAnimationFrame(function() {
           if (!self.isShown) return;
-
           self.element.removeClass('popup-hidden');
           self.element.addClass('popup-showing active');
           focusInput(self.element);
         });
       };
-
       self.hide = function(callback) {
         callback = callback || angular.noop;
         if (!self.isShown) return callback();
-
         self.isShown = false;
         self.element.removeClass('active');
         self.element.addClass('popup-hidden');
         $timeout(callback, 250, false);
       };
-
       self.remove = function() {
         if (self.removed) return;
-
         self.hide(function() {
           self.element.remove();
           self.scope.$destroy();
         });
-
         self.removed = true;
       };
-
       return self;
     }
 
@@ -219,6 +207,12 @@ GastosPopupModule.factory('$gastosPopup', [
           }
         }]
       }, opts || {}));
+    }
+
+    function fromTemplateUrl(url, options) {
+      return showPopup(extend({
+        templateUrl: url
+      }, options || {}));
     }
   }
 ]);

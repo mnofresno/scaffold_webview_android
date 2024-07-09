@@ -9,8 +9,6 @@ module.exports = {
         show: () => {}
     },
     $ionicHistory: {},
-    $ionicModal: {},
-    $gastosPopup: {},
     $ionicViewService: {}
 };
 

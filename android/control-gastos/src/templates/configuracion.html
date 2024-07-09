@@ -16,7 +16,7 @@
             </div>
             <div class="row">
                 <div class="col text-center">
-                    <div class="row" ng-repeat="fila in viewModel.availableCategorias | chunk: 2">
+                    <div class="row" ng-repeat="fila in availableCategorias | chunk: 2">
                         <div class="col col-50 text-center" style="margin: -3px;" ng-repeat="categoria in fila track by categoria.id">
                             <label class="item item-radio ng-valid">
                                 <input type="checkbox" name="radio-group" ng-checked="categoria.seleccionada" ng-click="viewModel.toggleCheck(categoria)" class="ng-untouched ng-valid ng-dirty ng-valid-parse">

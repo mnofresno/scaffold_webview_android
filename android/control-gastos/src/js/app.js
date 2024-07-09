@@ -7,7 +7,7 @@ import config from './config';
 import interceptors from './interceptors';
 import filters from './filters';
 import directives from './directives';
-import {$ionicPlatform, $ionicHistory, $ionicViewService, $ionicLoading, $ionicModal, md5, moment} from './ionic-cordova';
+import {$ionicPlatform, $ionicHistory, $ionicViewService, $ionicLoading, md5, moment} from './ionic-cordova';
 import '@uirouter/angularjs';
 import 'ng-cordova';
 import 'lodash';

@@ -2,35 +2,32 @@ import MD5 from "crypto-js/md5";
 
 angular.module('gastos.services', [])
 
-.service('PosicionService', function(Gasto, $sce)
-{
+.service('PosicionService', function($sce, $gastosPopup) {
     var self = this;
 
-    self.show = function($scope, mensaje)
-    {
-        $scope.mensajeRegistro = $sce.trustAsHtml(mensaje);
+    self.show = function($scope, mensaje) {
+      if (!$scope.viewModel) {
+        $scope.viewModel = {};
+      }
 
+      $scope.viewModel.mensajeRegistro = $sce.trustAsHtml(mensaje);
 
-        $ionicModal.fromTemplateUrl('templates/posicion.html', {
-            scope: $scope
-          }).then(function(modal) {
-            $scope.ventana = self.modal = modal;
-            $scope.ventana.show();
-          });
-
+      $gastosPopup.fromTemplateUrl('templates/posicion.html', {
+        scope: $scope
+      }).then(function(modal) {
+        $scope.viewModel.ventana = self.modal = modal;
+        $scope.viewModel.ventana.show();
+      });
     };
 
-    self.close = function()
-    {
-        if(self.modal !== undefined )
-        {
-            self.modal.hide();
-        }
-
+    self.close = function() {
+      if (self.modal !== undefined) {
+        self.modal.hide();
+      }
     };
 
     return self;
-})
+  })
 
 .service('Categoria', function($http, ENV, $localStorage, $q, Network, ApiEndPoint)
 {

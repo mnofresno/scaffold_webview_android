@@ -21,6 +21,7 @@ angular.module('gastos.controllers', [])
 
     function initialize() {
         viewModel.mostrarPosicion = function() {
+            viewModel.isMenuOpen = false;
             PosicionService.show($scope);
         };
 
@@ -30,7 +31,7 @@ angular.module('gastos.controllers', [])
         };
         document.addEventListener('click', function(event) {
             var menuElement = document.querySelector('.menu-container');
-            if (viewModel.isMenuOpen && !menuElement.contains(event.target)) {
+            if (menuElement && $scope.viewModel.isMenuOpen && !menuElement.contains(event.target)) {
                 $scope.$apply(function() {
                     viewModel.isMenuOpen = false;
                 });
@@ -110,11 +111,11 @@ angular.module('gastos.controllers', [])
 
 .controller('ConfiguracionCtrl', function($scope, ApiEndPoint, $localStorage, Categoria) {
     var viewModel = $scope.viewModel = {
-        availableCategorias: [],
         saldoAutoRefresh: false,
         categoriasVisibles: [],
         apiEndpoint: { produccion: ApiEndPoint.get()}
     };
+    $scope.availableCategorias = [];
 
     viewModel.cambiarUrl = function() {
         viewModel.url = viewModel.apiEndpoint.produccion;
@@ -140,12 +141,12 @@ angular.module('gastos.controllers', [])
     };
 
     viewModel.guardarConfig = function() {
-        viewModel.categoriasVisibles = viewModel.availableCategorias.filter(x => x.seleccionada).map(x => x.id);
+        viewModel.categoriasVisibles = $scope.availableCategorias.filter(x => x.seleccionada).map(x => x.id);
         $localStorage.set('configuracion', viewModel);
     };
 
     viewModel.toggleCheck = function(categoria) {
-        categoria.seleccionada = !categoria.seleccionada;
+        $scope.availableCategorias.find(x => x.id === categoria.id).seleccionada = !categoria.seleccionada;
     };
 
     viewModel.toggleSaldoAutoRefresh = function() {
@@ -158,8 +159,12 @@ angular.module('gastos.controllers', [])
 
     var initialize = function() {
         Categoria.query().then(function(availableCategorias) {
-            viewModel.availableCategorias = availableCategorias;
-            var configuracion = leerConfiguracion();
+            $scope.availableCategorias = availableCategorias.map(x => ({
+                seleccionada: false,
+                id: x.id,
+                titulo: x.titulo
+            }));
+            const configuracion = leerConfiguracion();
             viewModel.categoriasVisibles = !configuracion || !configuracion.categoriasVisibles
                 ? availableCategorias.map(x => x.id)
                 : configuracion.categoriasVisibles;
@@ -173,41 +178,46 @@ angular.module('gastos.controllers', [])
     }
 })
 
-.controller('PosicionCtrl', function($scope, Gasto)
-{
-    var viewModel = $scope.viewModel = {};
-    viewModel.ventana = $scope.ventana;
+.controller('PosicionCtrl', function($scope, Gasto) {
+    if (!$scope.viewModel) {
+      $scope.viewModel = {};
+    }
+    var viewModel = $scope.viewModel;
+
     viewModel.incluirTarjeta = false;
 
-    viewModel.mensajeRegistro = $scope.mensajeRegistro;
+    viewModel.cerrar = function () {
+      console.debug('cerrar');
+      if ($scope.viewModel.ventana) {
+        $scope.viewModel.ventana.hide();
+      }
+    };
 
-    viewModel.loadResumen = function()
-    {
-      Gasto.Resumen(viewModel.incluirTarjeta).then(function(respuesta)
-      {
-          if(respuesta && respuesta.resumen && respuesta.resumen.totalAjeno)
-          {
-              viewModel.resumen = respuesta.resumen;
-              viewModel.mostrarResumen = viewModel.resumen !== undefined;
-          }
+    viewModel.loadResumen = function() {
+      Gasto.Resumen(viewModel.incluirTarjeta).then(function(respuesta) {
+        if (respuesta && respuesta.resumen && respuesta.resumen.totalAjeno) {
+          viewModel.resumen = respuesta.resumen;
+          viewModel.mostrarResumen = viewModel.resumen !== undefined;
+        }
       });
     };
 
     viewModel.loadResumen();
-    viewModel.resultIcon = function()
-    {
-        var val = parseInt((viewModel.resumen.diferencia ? viewModel.resumen.diferencia : "0").replace(",", "."));
-        return { 'fa-thumbs-o-down': val < 0, 'fa-thumbs-o-up': val >= 0 };
+
+    viewModel.resultIcon = function() {
+      var val = parseInt((viewModel.resumen.diferencia ? viewModel.resumen.diferencia : "0").replace(",", "."));
+      return { 'fa-thumbs-o-down': val < 0, 'fa-thumbs-o-up': val >= 0 };
     };
-})
+  })
 
 .controller('ListadoGastosCtrl', function($scope,
-                                          Categoria,
-                                          Gasto,
-                                          Auth,
-                                          Mapper,
-                                          $rootScope,
-                                          ScreenOrientation)
+                                        Categoria,
+                                        Gasto,
+                                        Auth,
+                                        Mapper,
+                                        $rootScope,
+                                        ScreenOrientation,
+                                        $gastosPopup)
 {
     var viewModel = $scope.viewModel = { enableFilters: false };
 
@@ -253,7 +263,7 @@ angular.module('gastos.controllers', [])
             console.debug("DETALLE!: " + JSON.stringify(m));
             $scope.detalle = m;
             $scope.movLista = movimiento;
-              $ionicModal.fromTemplateUrl('templates/detalle.html',
+              $gastosPopup.fromTemplateUrl('templates/detalle.html',
             {
                 scope: $scope
             }).then(function(modal)
