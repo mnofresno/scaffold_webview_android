@@ -19,7 +19,10 @@
                     </div>
         </div>
         <div>
-            <ion-checkbox color="dark" checked="false" ng-change="cambioSoloNotificar()" ng-model="viewModel.soloEnviarMensaje" ng-true-value="true" ng-false-value="false">Sólo notificar (No registra movimientos)</ion-checkbox>
+            <label>
+                <input type="checkbox" ng-change="cambioSoloNotificar()" ng-model="viewModel.soloEnviarMensaje" ng-true-value="true" ng-false-value="false">
+                Sólo notificar (No registra movimientos)
+            </label>
         <div>
         <div>
             <button ng-disabled="!viewModel.isValid()" ng-click="viewModel.registrar()" class="button button-block button-positive">Registrar</button>
@@ -29,5 +32,5 @@
         </div>
     </ion-content>
 
-    
+
 </ion-view>

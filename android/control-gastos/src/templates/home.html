@@ -14,7 +14,10 @@
         </div>
         <div class="row">
           <div class="col">
-              <ion-checkbox color="dark" checked="false" ng-model="viewModel.tarjeta_credito" ng-true-value="true" ng-false-value="false">Tarjeta de crédito</ion-checkbox>
+              <label>
+                <input type="checkbox" ng-model="viewModel.tarjeta_credito" ng-true-value="true" ng-false-value="false">
+                Tarjeta de crédito
+              </label>
           </div>
         </div>
         <div class="row" ng-if="viewModel.tarjeta_credito">

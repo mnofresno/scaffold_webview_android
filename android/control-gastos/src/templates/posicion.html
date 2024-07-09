@@ -26,7 +26,15 @@
                                 <tr><td>Ajeno</td><td> <strong> $ {{ viewModel.resumen.totalAjeno}} </strong></td></tr>
                                 <tr><td colspan="2"><strong>Saldo actual</strong></td>
                                 <tr><td colspan="2"> <strong> $ {{ viewModel.resumen.diferencia}} <i style="font-size: 16pt;" class="fa" ng-class="viewModel.resultIcon()" ></i> </strong></td>
-                                <tr><td colspan="2"><ion-checkbox color="dark" checked="false" ng-change="viewModel.loadResumen()" ng-model="viewModel.incluirTarjeta" ng-true-value="true" ng-false-value="false">Incluir gastos aún impagos</ion-checkbox></td></tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <label>
+                                        <input type="checkbox" ng-change="viewModel.loadResumen()" ng-model="viewModel.incluirTarjeta" ng-true-value="true" ng-false-value="false">
+                                        Incluir gastos aún impagos
+                                        </label>
+                                    </td>
+                                </tr>
+
                             </table>
                         </div>
                     </center>

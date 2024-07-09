@@ -56,4 +56,28 @@ angular.module('gastos.filters', [])
 
         return array.join(', ');
     };
+})
+
+.filter('amDateFormat', function() {
+    return function(value, format) {
+        if (!value) return '';
+
+        // Parse the date string
+        const date = new Date(value);
+
+        if (isNaN(date.getTime())) {
+            return value; // Return original value if it's not a valid date
+        }
+
+        // Format the date
+        const options = {};
+        if (format.includes('DD')) options.day = '2-digit';
+        if (format.includes('MM')) options.month = '2-digit';
+        if (format.includes('YYYY')) options.year = 'numeric';
+        if (format.includes('HH')) options.hour = '2-digit';
+        if (format.includes('mm')) options.minute = '2-digit';
+        if (format.includes('ss')) options.second = '2-digit';
+
+        return new Intl.DateTimeFormat('en-US', options).format(date);
+    };
 });

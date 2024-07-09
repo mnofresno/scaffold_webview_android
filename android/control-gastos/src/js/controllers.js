@@ -188,7 +188,7 @@ angular.module('gastos.controllers', [])
 
     viewModel.cerrar = function () {
       if ($scope.viewModel.ventana) {
-        $scope.viewModel.ventana.hide();
+        $scope.viewModel.ventana.remove();
       }
     };
 

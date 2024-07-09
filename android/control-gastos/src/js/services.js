@@ -22,7 +22,7 @@ angular.module('gastos.services', [])
 
     self.close = function() {
       if (self.modal !== undefined) {
-        self.modal.hide();
+        self.modal.remove();
       }
     };
 
