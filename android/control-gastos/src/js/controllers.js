@@ -255,18 +255,14 @@ angular.module('gastos.controllers', [])
         });
     };
 
-    viewModel.getDetalleMovimiento = function(movimiento)
-    {
-        Gasto.get(movimiento.id).then(function(m)
-        {
+    viewModel.getDetalleMovimiento = function(movimiento) {
+        Gasto.get(movimiento.id).then(function(m) {
             console.debug("DETALLE!: " + JSON.stringify(m));
             $scope.detalle = m;
             $scope.movLista = movimiento;
-              $gastosPopup.fromTemplateUrl('templates/detalle.html',
-            {
+            $gastosPopup.fromTemplateUrl('templates/detalle.html', {
                 scope: $scope
-            }).then(function(modal)
-            {
+            }).then(function(modal) {
                 $scope.ventana = modal;
                 $scope.ventana.show();
             });

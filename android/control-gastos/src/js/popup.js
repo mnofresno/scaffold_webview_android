@@ -218,10 +218,25 @@ GastosPopupModule.factory('$gastosPopup', [
       }, opts || {}));
     }
 
+
     function fromTemplateUrl(url, options) {
-      return showPopup(extend({
-        templateUrl: url
-      }, options || {}));
+        var deferred = $q.defer();
+
+        var popup = $gastosPopup._createPopup(extend({
+          templateUrl: url
+        }, options || {}));
+
+        $.get(url).then(function(template) {
+          var popupBody = jqLite(popup.element[0].querySelector('.popup-body'));
+          popup.scope.trustedTemplate = $sce.trustAsHtml(template);
+          popupBody.html(template);  // Insert template HTML
+          $compile(popupBody.contents())(popup.scope);  // Compile and link the content
+          deferred.resolve(popup);
+        }, function() {
+          deferred.reject('Failed to load template: ' + url);
+        });
+
+        return deferred.promise;
     }
   }
 ]);
