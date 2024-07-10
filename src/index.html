@@ -1,19 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="webviewApp">
+<html ng-app="gastos">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebView Example</title>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+  <title>Control Gastos</title>
 </head>
-<body ng-controller="MainController">
-    <div class="container">
-        <h1>{{ message }}</h1>
-        <p>This is a simple HTML page displayed in an Android WebView.</p>
-    </div>
-    <div id="dialog" title="Dont contact form">
-        <p>Now I can read a better text</p>
-    </div>
-    <button ng-click="openDialog()">Open a new dialog</button>
+<body>
+  <div ui-view></div>
 </body>
 </html>

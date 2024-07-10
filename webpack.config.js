@@ -1,15 +1,15 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = (env, argv) => {
     const isProduction = argv.mode === 'production';
 
     return {
-        entry: './src/js/main.js',
+        entry: './src/js/app.js',
         output: {
             filename: 'bundle.js',
-            path: path.resolve(__dirname, 'dist'),
+            path: path.resolve(__dirname, 'www'),
             libraryTarget: 'umd',
             globalObject: 'this',
         },
@@ -17,7 +17,18 @@ module.exports = (env, argv) => {
             rules: [
                 {
                     test: /\.css$/i,
-                    use: ['style-loader', 'css-loader'],
+                    use: [
+                        isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
+                        'css-loader'
+                    ],
+                },
+                {
+                    test: /\.scss$/i,
+                    use: [
+                        isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
+                        'css-loader',
+                        'sass-loader'
+                    ],
                 },
                 {
                     test: /\.(png|jpg|gif)$/i,
@@ -34,20 +45,22 @@ module.exports = (env, argv) => {
                 filename: 'index.html',
                 inject: 'body'
             }),
-            new CopyWebpackPlugin({
-                patterns: [
-                    {
-                        from: path.resolve(__dirname, 'dist'),
-                        to: path.resolve(__dirname, 'android/src/main/assets'),
-                        noErrorOnMissing: true
-                    }
-                ]
+            new MiniCssExtractPlugin({
+                filename: '[name].css',
+                chunkFilename: '[id].css'
             })
         ],
         devServer: {
-            static: {
-                directory: path.join(__dirname, 'dist'),
-            },
+            static: [
+                {
+                    directory: path.join(__dirname, 'src'),
+                    publicPath: '/',
+                },
+                {
+                    directory: path.join(__dirname, 'www'),
+                    publicPath: '/www',
+                },
+            ],
             compress: true,
             port: 9350,
             hot: true,

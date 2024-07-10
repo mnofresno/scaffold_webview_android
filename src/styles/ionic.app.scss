@@ -19,10 +19,7 @@ $dark:                            #444 !default;
 $ionicons-font-path: "fonts" !default;
 $fa-font-path:  "fonts" !default;
 
-// Include all of Ionic
-@import '~@ionic/angular/css/core.css';
 @import "listaDinamica";
-@import '~@fortawesome/fontawesome-free/scss/fontawesome.scss';
 @import "ionic.app.css";
 
 .custom-select{

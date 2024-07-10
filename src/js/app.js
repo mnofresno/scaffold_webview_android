@@ -155,6 +155,7 @@ app.run(function(
 
         // document.addEventListener('deviceready', function ()
         // {
+        // GATO
         //     // Android customization
         //     //cordova.plugins.backgroundMode.setDefaults({ text: 'Obteniendo saldo actual...', title: 'CONTROL DE GASTOS'});
         //     // Enable background mode

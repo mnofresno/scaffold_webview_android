@@ -41,7 +41,7 @@ jobs:
         with:
           context: .
           file: Dockerfile
-          tags: 'ghcr.io/mnofresno/android-build-yarn-webpack:2.0.0'
+          tags: 'ghcr.io/mnofresno/cordova-build-yarn-webpack:3.0.0'
           push: true
           cache-from: 'type=local,src=/tmp/.buildx-cache'
           cache-to: 'type=local,dest=/tmp/.buildx-cache,mode=max'

@@ -1,34 +1,35 @@
 #!/bin/bash
 
-IMAGE_NAME="ghcr.io/mnofresno/android-build-yarn-webpack:2.0.0"
+IMAGE_NAME="ghcr.io/mnofresno/cordova-build-yarn-webpack:3.0.0"
 CONTAINER_NAME="android-build"
-WORKING_DIR="/app/android"
-APK_PATH_INSIDE_CONTAINER="build/outputs/apk/debug/android-debug.apk"
-APK_PATH="android/$APK_PATH_INSIDE_CONTAINER"
+WORKING_DIR="/app"
+APK_PATH="platforms/android/app/build/outputs/apk/debug/app-debug.apk"
+APK_PATH_INSIDE_CONTAINER="/app/$APK_PATH"
 
-docker run -d --name $CONTAINER_NAME \
-    --workdir $WORKING_DIR \
-    -v $(pwd):/app \
-    --network host \
-    -e ANDROID_HOME=/usr/local/android-sdk \
-    -e PATH=$ANDROID_HOME/cmdline-tools/tools/bin:$ANDROID_HOME/platform-tools:/usr/bin:$PATH \
-    -e BUILD_TOOLS_VERSION="34.0.0" \
-    $IMAGE_NAME tail -f /dev/null
 
 run_docker_command() {
   docker exec $CONTAINER_NAME "$@"
 }
+docker run -d --name $CONTAINER_NAME \
+    --workdir $WORKING_DIR \
+    -v $(pwd):/app \
+    -e ANDROID_HOME=/usr/local/android-sdk \
+    --network host \
+    -e BUILD_TOOLS_VERSION="34.0.0" \
+    $IMAGE_NAME tail -f /dev/null
 
-PACKAGE_NAME=$(run_docker_command /app/get_package_name.sh | tr -d '\r')
+PACKAGE_NAME=$(run_docker_command /app/get_package_name.sh "$APK_PATH_INSIDE_CONTAINER" | tr -d '\r')
 MAIN_ACTIVITY="$PACKAGE_NAME/.MainActivity"
 
 run_docker_command yarn install
-run_docker_command yarn run build
+run_docker_command yarn buildDev
 
 if [ -f "$APK_PATH" ]; then
   run_docker_command rm "$APK_PATH_INSIDE_CONTAINER"
 fi
-run_docker_command ./gradlew assembleDebug
+run_docker_command cordova prepare
+run_docker_command cordova platform add android
+run_docker_command cordova build android
 
 while [[ "$#" -gt 0 ]]; do
   case $1 in
