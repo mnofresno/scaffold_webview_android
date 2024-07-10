@@ -450,17 +450,10 @@ angular.module('gastos.services', [])
 })
 
 
-.service('ApiEndPoint', function(ENV, $localStorage)
-{
-    self.get = function()
-    {
-        var endPointConfig = ENV.apiEndpoint;
-        var config = $localStorage.get('configuracion');
-        return ENV.dev ?
-                (config && config.apiEndpoint ? config.apiEndpoint.testing    : endPointConfig.testing   ) :
-                (config && config.apiEndpoint ? config.apiEndpoint.produccion : endPointConfig.produccion);
+.service('ApiEndPoint', function(ENV) {
+    self.get = function() {
+        return ENV.apiEndpoint[ENV.env];
     };
-
     return self;
 })
 

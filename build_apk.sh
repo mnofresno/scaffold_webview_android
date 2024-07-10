@@ -22,7 +22,7 @@ PACKAGE_NAME=$(run_docker_command /app/get_package_name.sh "$APK_PATH_INSIDE_CON
 MAIN_ACTIVITY="$PACKAGE_NAME/.MainActivity"
 
 run_docker_command yarn install
-run_docker_command yarn buildDev
+run_docker_command yarn build
 
 if [ -f "$APK_PATH" ]; then
   run_docker_command rm "$APK_PATH_INSIDE_CONTAINER"

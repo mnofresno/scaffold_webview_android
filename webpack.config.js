@@ -1,6 +1,8 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = (env, argv) => {
     const isProduction = argv.mode === 'production';
@@ -13,6 +15,7 @@ module.exports = (env, argv) => {
             libraryTarget: 'umd',
             globalObject: 'this',
         },
+        devtool: 'eval-source-map',
         module: {
             rules: [
                 {
@@ -37,6 +40,10 @@ module.exports = (env, argv) => {
                         filename: 'images/[hash][ext][query]'
                     }
                 },
+                {
+                    test: /\.html$/i,
+                    loader: 'html-loader',
+                },
             ],
         },
         plugins: [
@@ -48,7 +55,12 @@ module.exports = (env, argv) => {
             new MiniCssExtractPlugin({
                 filename: '[name].css',
                 chunkFilename: '[id].css'
-            })
+            }),
+            new CopyWebpackPlugin({
+                patterns: [
+                    { from: 'src/templates', to: 'templates' }
+                ],
+            }),
         ],
         devServer: {
             static: [
@@ -65,6 +77,24 @@ module.exports = (env, argv) => {
             port: 9350,
             hot: true,
             open: true,
+        },
+        optimization: {
+            minimize: isProduction,
+            minimizer: isProduction ? [
+                new TerserPlugin({
+                    terserOptions: {
+                        mangle: true, // Solo manglar en producción
+                        compress: {
+                            drop_console: true, // Eliminar console.logs en producción
+                        },
+                    },
+                }),
+            ] : [],
+        },
+        performance: {
+            hints: false, // Deshabilita todos los avisos de rendimiento
+            maxAssetSize: 512000, // Tamaño máximo del asset en bytes (512 KiB)
+            maxEntrypointSize: 512000, // Tamaño máximo del entry point en bytes (512 KiB)
         },
         mode: isProduction ? 'production' : 'development'
     };

@@ -1,57 +1,57 @@
 angular.module('gastos.interceptors', [])
 
-.factory('CheckNetworkInterceptor', function($q, $injector, Network) {
-    return {
-        request: function(config) {
+// .factory('CheckNetworkInterceptor', function($q, Network) {
+//     return {
+//         request: function(config) {
 
-            if (config.url.indexOf('templates') === 0) return config;
+//             if (config.url.indexOf('templates') === 0) return config;
 
-            var deferred = $q.defer();
+//             var deferred = $q.defer();
 
-            switch(Network.getNetwork()) {
-                case Connection.ETHERNET:
-                case Connection.WIFI:
-                    deferred.resolve(config);
-                    break;
+//             switch(Network.getNetwork()) {
+//                 case Connection.ETHERNET:
+//                 case Connection.WIFI:
+//                     deferred.resolve(config);
+//                     break;
 
-                case Connection.UNKNOWN:
-                case Connection.CELL_2G:
-                case Connection.CELL_3G:
-                case Connection.CELL_4G:
-                    deferred.resolve(config);
-                /*case Connection.CELL:
-                    $injector.get('$abcPopup').confirm({
-                        cssClass: 'popup-container-balanced',
-                        title: '<h1><i class="icon ion-information-circled"></i></h1>',
-                        template: 'La operación consumirá datos de su servicio, ¿desea continuar?',
-                        cancelText: 'Cancelar',
-                        okText: 'Aceptar'
-                    }).then(function(result) {
-                        if (result) {
-                            deferred.resolve(config);
-                        } else {
-                            deferred.reject({
-                                status: '500',
-                                statusText: 'Cancelado por el usuario',
-                                data: 'El usuario ha cancelado la operación'
-                            });
-                        }
-                    });*/
-                    break;
+//                 case Connection.UNKNOWN:
+//                 case Connection.CELL_2G:
+//                 case Connection.CELL_3G:
+//                 case Connection.CELL_4G:
+//                     deferred.resolve(config);
+//                 /*case Connection.CELL:
+//                     $injector.get('$abcPopup').confirm({
+//                         cssClass: 'popup-container-balanced',
+//                         title: '<h1><i class="icon ion-information-circled"></i></h1>',
+//                         template: 'La operación consumirá datos de su servicio, ¿desea continuar?',
+//                         cancelText: 'Cancelar',
+//                         okText: 'Aceptar'
+//                     }).then(function(result) {
+//                         if (result) {
+//                             deferred.resolve(config);
+//                         } else {
+//                             deferred.reject({
+//                                 status: '500',
+//                                 statusText: 'Cancelado por el usuario',
+//                                 data: 'El usuario ha cancelado la operación'
+//                             });
+//                         }
+//                     });*/
+//                     break;
 
-                case Connection.NONE:
-                    deferred.reject({
-                        status: '500',
-                        statusText: 'Conección a Internet',
-                        data: 'No tiene acceso a Internet'
-                    });
-                    break;
-            }
+//                 case Connection.NONE:
+//                     deferred.reject({
+//                         status: '500',
+//                         statusText: 'Conección a Internet',
+//                         data: 'No tiene acceso a Internet'
+//                     });
+//                     break;
+//             }
 
-            return deferred.promise;
-        }
-    };
-})
+//             return deferred.promise;
+//         }
+//     };
+// })
 
 .factory('LoadingInterceptor', function($rootScope, $q) {
     return {

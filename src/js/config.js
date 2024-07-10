@@ -1,44 +1,29 @@
 angular.module('gastos.config', [])
 
-.service('ENV', function($localStorage)
-{
+.service('ENV', function($localStorage) {
     var defaults = {
         apiEndpoint: {
-            produccion: 'http://localhost:180/api/',
-        // produccion: 'https://gastos.fresno.ar/api/',
-                       testing:    'http://localhost:8192/api/',},
-        dev: false,
+            production: 'https://gastos.fresno.ar/api/',
+            testing: 'https://gastos-qa.fresno.ar/api/',
+            dev:    'http://localhost:8192/api/'
+        },
         camera: {
             quality: 100
         }
     };
 
-    var storedConfig = $localStorage.get('configuracion');
+    const storedConfig = $localStorage.get('configuracion');
+    const env = $localStorage.get('environment') ?? 'production';
 
-    var configs = {};
+    let outputConfig = {};
 
-    if(storedConfig)
-    {
-        configs = storedConfig;
+    if(storedConfig) {
+        outputConfig = storedConfig;
+    } else {
+        outputConfig = defaults;
+        $localStorage.set('configuracion', outputConfig)
     }
-    else
-    {
-        configs = defaults;
-        $localStorage.set('configuracion', configs)
-    }
-
-    var outputConfig = {
-        apiEndpoint: (function()
-        {
-            return configs.apiEndpoint;
-        })(),
-        dev: (function()
-        {
-            return configs.dev;
-        })()
-    };
-
     outputConfig.defaults = defaults;
-
+    outputConfig.env = env;
     return outputConfig;
 });

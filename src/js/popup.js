@@ -1,6 +1,6 @@
 import $ from 'jquery';
 
-var GastosPopupModule = angular.module('gastos.popup', ['ui.router']),
+var GastosPopupModule = angular.module('gastos.popup', []),
     extend = angular.extend,
     jqLite = angular.element;
 

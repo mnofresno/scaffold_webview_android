@@ -1,17 +1,13 @@
-
 angular.module('gastos.controllers', [])
 
 .controller('AppCtrl', function($scope,
     $state,
-    $timeout,
     PosicionService,
     Gasto,
     Categoria,
-    $q,
     SolicitudService,
     Auth,
     MensajesService,
-    $localStorage,
     $rootScope,
     NotificacionesService,
     QrScanner,
@@ -113,12 +109,12 @@ angular.module('gastos.controllers', [])
     var viewModel = $scope.viewModel = {
         saldoAutoRefresh: false,
         categoriasVisibles: [],
-        apiEndpoint: { produccion: ApiEndPoint.get()}
+        apiEndpoint: { production: ApiEndPoint.get()}
     };
     $scope.availableCategorias = [];
 
     viewModel.cambiarUrl = function() {
-        viewModel.url = viewModel.apiEndpoint.produccion;
+        viewModel.url = viewModel.apiEndpoint.production;
         $ionicPopup.show({
             template: '<input type="text" ng-model="viewModel.url" autofocus/>',
             title: 'Direccion URL API',
@@ -129,7 +125,7 @@ angular.module('gastos.controllers', [])
                     text: '<b>Aceptar</b>',
                     type: 'button-positive',
                     onTap: function(e) {
-                        viewModel.apiEndpoint.produccion = viewModel.url;
+                        viewModel.apiEndpoint.production = viewModel.url;
                     }
                 },
                 {

@@ -25,7 +25,7 @@ const app = angular.module('gastos', [
     'gastos.popup'
 ]);
 
-app.config(function($stateProvider, $urlRouterProvider) {
+app.config(function($stateProvider) {
     $stateProvider
     .state('app', {
         url: '/app',
