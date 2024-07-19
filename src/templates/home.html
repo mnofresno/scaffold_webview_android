@@ -43,10 +43,10 @@
                 </div>
             </div>
         </div>
-        <div class="row" >
+        <div class="row" ng-show="viewModel.hasFilteredCategories()" ng-click="viewModel.toggleShowAllCategories()">
             <div class="col text-center">
                 <div class="item-content">
-                    <i class="ion ion-chevron-up"></i>
+                    <i class="ion" ng-class="{ 'ion-chevron-down': !viewModel.noFiltrarCategorias, 'ion-chevron-up': viewModel.noFiltrarCategorias }"></i>
                 </div>
             </div>
         </div>
