@@ -8,7 +8,10 @@
     <content src="index.html" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
+    <plugin name="cordova-plugin-qrscanner-androidx" spec="https://github.com/i-mediasolutions/cordova-plugin-qrscanner-androidx" />
     <platform name="android">
+        <preference name="AndroidXEnabled" value="true" />
+        <preference name="GradlePluginKotlinEnabled" value="true" />
         <preference name="GradleUse" value="gradlew" />
         <preference name="GradlePath" value="/app/gradlew" />
         <preference name="GradlePluginGoogleServicesVersion" value="4.3.15" />

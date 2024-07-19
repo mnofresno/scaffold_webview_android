@@ -42,7 +42,20 @@ module.exports = (env, argv) => {
                 },
                 {
                     test: /\.html$/i,
-                    loader: 'html-loader',
+                    use: {
+                            loader: "html-loader",
+                            options: {
+                            sources: {
+                                urlFilter: (attribute, value, resourcePath) => {
+                                    if (/cordova.js$/.test(value)) {
+                                        return false;
+                                    }
+
+                                    return true;
+                                }
+                            },
+                        },
+                    },
                 },
             ],
         },
@@ -50,7 +63,7 @@ module.exports = (env, argv) => {
             new HtmlWebpackPlugin({
                 template: './src/index.html',
                 filename: 'index.html',
-                inject: 'body'
+                inject: 'body',
             }),
             new MiniCssExtractPlugin({
                 filename: '[name].css',

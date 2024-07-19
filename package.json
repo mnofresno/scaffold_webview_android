@@ -19,7 +19,9 @@
     "copy-webpack-plugin": "^12.0.2",
     "cordova-android": "^13.0.0",
     "cordova-plugin-camera": "^7.0.0",
+    "cordova-plugin-device": "^3.0.0",
     "cordova-plugin-push": "^0.0.1",
+    "cordova-plugin-qrscanner-androidx": "https://github.com/i-mediasolutions/cordova-plugin-qrscanner-androidx.git",
     "css-loader": "^7.1.2",
     "html-loader": "^5.0.0",
     "html-webpack-plugin": "^5.3.1",
@@ -38,7 +40,9 @@
     "plugins": {
       "cordova-plugin-camera": {
         "ANDROIDX_CORE_VERSION": "1.6.+"
-      }
+      },
+      "cordova-plugin-qrscanner-androidx": {},
+      "cordova-plugin-device": {}
     }
   },
   "dependencies": {

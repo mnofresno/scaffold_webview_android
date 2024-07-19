@@ -36,9 +36,9 @@
         <!-- <li class="menu-item" ng-click="viewModel.VerMensajesNoLeidos()">
             <i class="icon ion-email"></i> Mensajes no leídos
         </li> -->
-        <!-- <li class="menu-item" ng-click="viewModel.scanQrCode()">
+        <li class="menu-item" ng-click="viewModel.scanQrCode()">
             <i class="icon ion-qr-scanner"></i> Leer código QR
-        </li> -->
+        </li>
         <li class="menu-item" ng-click="viewModel.cerrarSesion()">
             <i class="ion-android-exit"></i> Cerrar sesión
         </li>
@@ -54,5 +54,5 @@
             <strong>{{ viewModel.saldo }}</strong> <i class="ion-loop"></i>
         </button>
     </div>
-    <div ui-view="menuContent"></div>
+    <div ui-view="menuContent" ng-if="viewModel.showApp"></div>
 </div>

@@ -1,6 +1,7 @@
 angular.module('gastos.controllers', [])
 
-.controller('AppCtrl', function($scope,
+.controller('AppCtrl', function(
+    $scope,
     $state,
     PosicionService,
     Gasto,
@@ -13,8 +14,7 @@ angular.module('gastos.controllers', [])
     QrScanner,
     $http,
     ApiEndPoint) {
-    var viewModel = $scope.viewModel = {isMenuOpen: false};
-
+    var viewModel = $scope.viewModel = {isMenuOpen: false, showApp: true};
     function initialize() {
         viewModel.mostrarPosicion = function() {
             viewModel.isMenuOpen = false;
@@ -81,7 +81,10 @@ angular.module('gastos.controllers', [])
         $rootScope.refreshSaldo = viewModel.getSaldo;
 
         viewModel.scanQrCode = function() {
+            viewModel.isMenuOpen = false;
+            viewModel.showApp = false;
             QrScanner.scan(function(scanResult) {
+                viewModel.showApp = true;
                 var code = scanResult.text;
                 var loginData = { qrcode: code };
                 var callback = function(response) {
