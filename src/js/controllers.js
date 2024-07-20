@@ -14,7 +14,7 @@ angular.module('gastos.controllers', [])
     QrScanner,
     $http,
     ApiEndPoint) {
-    var viewModel = $scope.viewModel = {isMenuOpen: false, showApp: true};
+    var viewModel = $scope.viewModel = {isMenuOpen: false, showApp: true, isTransitioning: false};
     function initialize() {
         viewModel.mostrarPosicion = function() {
             viewModel.isMenuOpen = false;
@@ -22,9 +22,15 @@ angular.module('gastos.controllers', [])
         };
 
         viewModel.navigate = function(state) {
-            viewModel.isMenuOpen = false;
-            $state.go(state);
+            if (!viewModel.isTransitioning) {
+                viewModel.isMenuOpen = false;
+                viewModel.isTransitioning = true;
+                $state.go(state).finally(function() {
+                    viewModel.isTransitioning = false;
+                });
+            }
         };
+
         document.addEventListener('click', function(event) {
             var menuElement = document.querySelector('.menu-container');
             if (menuElement && $scope.viewModel.isMenuOpen && !menuElement.contains(event.target)) {
@@ -108,11 +114,12 @@ angular.module('gastos.controllers', [])
     }
 })
 
-.controller('ConfiguracionCtrl', function($scope, ApiEndPoint, $localStorage, Categoria) {
+.controller('ConfiguracionCtrl', function(ENV, $scope, $localStorage, Categoria) {
+    const endpoint = ENV.apiEndpoint;
     var viewModel = $scope.viewModel = {
         saldoAutoRefresh: false,
-        categoriasVisibles: [],
-        apiEndpoint: { production: ApiEndPoint.get()}
+        categoriasVisibles: ENV.categoriasVisibles,
+        apiEndpoint: endpoint
     };
     $scope.availableCategorias = [];
 
@@ -152,21 +159,13 @@ angular.module('gastos.controllers', [])
         viewModel.saldoAutoRefresh = !viewModel.saldoAutoRefresh;
     };
 
-    var leerConfiguracion = function() {
-        return $localStorage.get('configuracion') || viewModel;
-    };
-
     var initialize = function() {
         Categoria.query().then(function(availableCategorias) {
             $scope.availableCategorias = availableCategorias.map(x => ({
-                seleccionada: false,
+                seleccionada: (viewModel.categoriasVisibles ?? []).includes(x.id),
                 id: x.id,
                 titulo: x.titulo
             }));
-            const configuracion = leerConfiguracion();
-            viewModel.categoriasVisibles = !configuracion || !configuracion.categoriasVisibles
-                ? availableCategorias.map(x => x.id)
-                : configuracion.categoriasVisibles;
         });
     };
 
@@ -398,52 +397,81 @@ angular.module('gastos.controllers', [])
     };
 })
 
-.controller('HomeCtrl', function($scope,
-                                 $state,
-                                 $rootScope,
-                                 Categoria,
-                                 Gasto,
-                                 Auth,
-                                 $timeout,
-                                 PosicionService)
-{
+.controller('HomeCtrl', function(
+    $scope,
+    $state,
+    $rootScope,
+    Categoria,
+    Gasto,
+    Auth,
+    PosicionService,
+    $http,
+    ApiEndPoint
+) {
 
     if (typeof $rootScope.refreshSaldo === 'function') {
         $rootScope.refreshSaldo();
     }
 
     var viewModel = $scope.viewModel = {
-                                            tarjeta_credito:        false,
-                                            cuotasTarjeta:          1,
-                                            noFiltrarCategorias:    false,
-                                            categorias:             [],
-                                            importeGasto:             "",
-                                            categoriaSeleccionada:     {id: '', titulo: ''},
-                                            usuario:                 Auth.get(),
-                                            mostrarResumen:         false,
-                                            registroExitoso:        false,
-                                            mensajeRegistro:        "",
-                                            comentarioGasto:        "",
-                                            resumen:                 {
-                                                                        totalPropio:    0,
-                                                                        totalAjeno:     0,
-                                                                        diferencia:        0,
-                                                                    },
-                                        };
+        external_payments: {enabled: false, list: []},
+        tarjeta_credito:        false,
+        cuotasTarjeta:          1,
+        noFiltrarCategorias:    false,
+        categorias:             [],
+        importeGasto:             "",
+        categoriaSeleccionada:     {id: '', titulo: ''},
+        usuario:                 Auth.get(),
+        mostrarResumen:         false,
+        registroExitoso:        false,
+        mensajeRegistro:        "",
+        comentarioGasto:        "",
+        resumen:                 {
+                                    totalPropio:    0,
+                                    totalAjeno:     0,
+                                    diferencia:        0,
+                                },
+    };
 
 
     const self = this;
 
-    var sincronizarCategorias = function()
-    {
-        Categoria.queryFiltered(function(categorias)
-        {
+    var sincronizarCategorias = function() {
+        Categoria.queryFiltered(function(categorias) {
             viewModel.categorias = categorias;
         }, viewModel.noFiltrarCategorias);
     };
 
-    viewModel.hasFilteredCategories = function()
-    {
+    const updateExternalPayments = (callback_to_update) => {
+        $http({url: ApiEndPoint.get() + 'integraciones/mercadopago/last_payments'}).then(callback_to_update);
+    };
+
+    viewModel.external_payments.copy = function (payment) {
+        let previous = viewModel.external_payments.list.find(x => x.selected);
+        if (previous) {
+            previous.selected = false;
+        }
+        payment.selected = true;
+        viewModel.importeGasto = payment.importe;
+        viewModel.comentarioGasto = "$ " + [
+            payment.importe,
+            payment.descripcion,
+            payment.fecha_creacion,
+            `(#${payment.id})`,
+        ].join(" ");
+    };
+
+    viewModel.external_payments.toggle = function () {
+        viewModel.external_payments.enabled = !viewModel.external_payments.enabled;
+        if (viewModel.external_payments.enabled) {
+            console.debug("DESCARGANDO..");
+            updateExternalPayments((response) => {
+                viewModel.external_payments.list = response.data.payments;
+            });
+        }
+    };
+
+    viewModel.hasFilteredCategories = function() {
         return Categoria.categoriasVisibles().length > 0;
     };
 

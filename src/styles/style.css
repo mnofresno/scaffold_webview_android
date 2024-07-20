@@ -197,3 +197,12 @@ body {
 .menu-open .content-container {
     margin-left: 250px;
 }
+
+.icon-button {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.icon-button.toggled {
+    color: green;
+}
