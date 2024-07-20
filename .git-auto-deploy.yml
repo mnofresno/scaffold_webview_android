@@ -1,2 +1,4 @@
 post_fetch_commands:
-    - echo "Succesfully upgraded to last version"
+    - ./auto-update/create_revision.sh
+    - ./build_apk.sh
+    - echo "Succesfully upgraded to last version: $(cat auto-update/public/revision.js)"

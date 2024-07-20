@@ -4,8 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auto update</title>
+    <script type="text/javascript" src="revision.js"></script>
 </head>
 <body>
-<h1>Gastos app auto update</h1>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('revision_span').innerText = sha1;
+        });
+    </script>
+<h1>Succesfully upgraded to last version: <span id="revision_span"></span></h1>
 </body>
 </html>

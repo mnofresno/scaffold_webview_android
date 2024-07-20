@@ -17,3 +17,4 @@ node_modules/
 /plugins/
 /platforms/
 www
+auto-update/public/revision.js
