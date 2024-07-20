@@ -21,7 +21,7 @@
     "cordova-plugin-camera": "^7.0.0",
     "cordova-plugin-device": "^3.0.0",
     "cordova-plugin-push": "^0.0.1",
-    "cordova-plugin-qrscanner-androidx": "https://github.com/i-mediasolutions/cordova-plugin-qrscanner-androidx.git",
+    "cordova-plugin-qrscanner-androidx": "git+https://github.com/i-mediasolutions/cordova-plugin-qrscanner-androidx.git",
     "css-loader": "^7.1.2",
     "html-loader": "^5.0.0",
     "html-webpack-plugin": "^5.3.1",
