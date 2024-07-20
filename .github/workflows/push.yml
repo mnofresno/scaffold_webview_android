@@ -86,7 +86,7 @@ jobs:
             }' \
             -s -o response_body.txt -w "%{http_code}" \
             --fail \
-            "https://${AUTODEPLOY_URL}?repo=${REPOSITORY}&key=${KEY_FILE_FOR_DEPLOY}")
+            "https://${AUTODEPLOY_URL}?repo=${REPOSITORY}&key=${KEY_FILE_FOR_DEPLOY}&run_in_background=true")
 
           cat response_body.txt
 
