@@ -1,0 +1,2 @@
+post_fetch_commands:
+    - echo "Succesfully upgraded to last version"

@@ -62,3 +62,35 @@ jobs:
 
       - name: Build APK file
         run: ./build_apk.sh
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build-apk]
+    if: success()
+    steps:
+      - name: Deploy apk to auto-updater
+        env:
+          AUTODEPLOY_URL: ${{ vars.AUTODEPLOY_URL }}
+          KEY_FILE_FOR_DEPLOY: ${{ secrets.KEY_FILE_FOR_DEPLOY }}
+          REPOSITORY: scaffold_webview_android
+        run: |
+          response=$(curl -X POST \
+            -H "Content-Type: application/json" \
+            -d '{
+              "key": "'"${KEY_FILE_FOR_DEPLOY}"'",
+              "run_in_background": true,
+              "commit": {
+                "sha": "'"${{ github.sha }}"'",
+                "author": "'"${{ github.actor }}"'"
+              }
+            }' \
+            -s -o response_body.txt -w "%{http_code}" \
+            --fail \
+            "https://${AUTODEPLOY_URL}?repo=${REPOSITORY}&key=${KEY_FILE_FOR_DEPLOY}")
+
+          cat response_body.txt
+
+          if [ "$response" -ge 400 ]; then
+            echo "Request failed with status code $response"
+            exit 1
+          fi
