@@ -1,5 +1,5 @@
-<ion-view cache-view="false" view-title="GASTOS OFFLINE">
-    <ion-content padding="true" class="has-header">
+<div class="ion-view" cache-view="false" view-title="GASTOS OFFLINE">
+    <div class="ion-content" padding="true" class="has-header">
         <ion-refresher
             pulling-text="Tirar hacia abajo para actualizar..."
             on-refresh="viewModel.actualizar()">
@@ -9,7 +9,7 @@
             <div lista-dinamica="viewModel.Movimientos" delete="viewModel.deleteItem"></div>
         </ion-list>
         <span ng-show="!viewModel.Movimientos || viewModel.Movimientos.items.length === 0">No hay movimientos offline registrados</span>
-    </ion-content>
+    </div>
 
-    
-</ion-view>
+
+</div>
