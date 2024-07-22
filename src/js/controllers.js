@@ -263,23 +263,17 @@ angular.module('gastos.controllers', [])
         });
     };
 
-    viewModel.cambioCategoria = function(value)
-    {
-        viewModel.categoriasSeleccionadas = value;
+    viewModel.cambioCategoria = function() {
+        viewModel.categoriasSeleccionadas = [viewModel.selectedCategorias].filter(x => x !== null);
         viewModel.cambioFiltro();
     };
 
-    viewModel.cambioFiltro = function()
-    {
+    viewModel.cambioFiltro = function() {
         var mesId = (viewModel.mesSeleccionado ? viewModel.mesSeleccionado.mes : null);
-        var catsIds = lodash.map(viewModel.categoriasSeleccionadas, function(cat)
-        {
-            return cat.id;
-        });
         var movId = (viewModel.tipoMovimientoSeleccionado ? viewModel.tipoMovimientoSeleccionado.id : null);
 
         Gasto.query({   mes       : mesId,
-                        categorias: catsIds,
+                        categorias: viewModel.categoriasSeleccionadas,
                         movimiento: movId    }).then(function(d)
                         {
                             var colMapping =
