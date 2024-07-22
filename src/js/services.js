@@ -791,4 +791,11 @@ angular.module('gastos.services', [])
     }, false);
 
     return self;
+})
+
+.service('AutoUpdater', function () {
+    let self = this;
+    self.checkForUpdates = function() {
+        // TBD
+    };
 });

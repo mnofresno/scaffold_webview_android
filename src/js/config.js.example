@@ -5,7 +5,7 @@ angular.module('gastos.config', [])
         apiEndpoint: {
             production: 'https://gastos.fresno.ar/api/',
             testing: 'https://gastos-qa.fresno.ar/api/',
-            dev:    'http://localhost:8192/api/'
+            dev:    'http://localhost:180/api/'
         },
         camera: {
             quality: 100

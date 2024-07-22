@@ -115,40 +115,17 @@ angular.module('gastos.controllers', [])
 })
 
 .controller('ConfiguracionCtrl', function(ENV, $scope, $localStorage, Categoria) {
-    const endpoint = ENV.apiEndpoint;
+    const endpoints = ENV.apiEndpoint;
     var viewModel = $scope.viewModel = {
         saldoAutoRefresh: false,
         categoriasVisibles: ENV.categoriasVisibles,
-        apiEndpoint: endpoint
+        apiEndpoint: endpoints[ENV.env]
     };
     $scope.availableCategorias = [];
 
-    viewModel.cambiarUrl = function() {
-        viewModel.url = viewModel.apiEndpoint.production;
-        $ionicPopup.show({
-            template: '<input type="text" ng-model="viewModel.url" autofocus/>',
-            title: 'Direccion URL API',
-            subTitle: 'Ingresar URL API control de gastos',
-            scope: $scope,
-            buttons: [
-                {
-                    text: '<b>Aceptar</b>',
-                    type: 'button-positive',
-                    onTap: function(e) {
-                        viewModel.apiEndpoint.production = viewModel.url;
-                    }
-                },
-                {
-                    text: '<b>Cerrar</b>',
-                    type: 'button-positive'
-                }
-            ]
-        });
-    };
-
     viewModel.guardarConfig = function() {
         viewModel.categoriasVisibles = $scope.availableCategorias.filter(x => x.seleccionada).map(x => x.id);
-        $localStorage.set('configuracion', viewModel);
+        $localStorage.set('configuracion', {...viewModel, apiEndpoint: endpoints});
     };
 
     viewModel.toggleCheck = function(categoria) {
@@ -572,7 +549,7 @@ angular.module('gastos.controllers', [])
     };
 })
 
-.controller('LoginCtrl', function($scope, $state, Auth, $gastosPopup) {
+.controller('LoginCtrl', function($scope, $state, Auth, $gastosPopup, AutoUpdater) {
      var viewModel = $scope.viewModel =
         {
             usuario: {
@@ -603,6 +580,7 @@ angular.module('gastos.controllers', [])
     };
 
     viewModel.login = function(e) {
+        AutoUpdater.checkForUpdates();
 
         if(e)
         {
