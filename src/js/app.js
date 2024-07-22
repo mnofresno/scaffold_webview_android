@@ -1,5 +1,5 @@
 import '../styles/ionic.app.scss';
-import '../styles/style.css';
+import '../styles/main_styles.scss';
 import angular from 'angular';
 import controllers from './controllers';
 import services from './services';
@@ -199,15 +199,20 @@ app.run(function(
         $state.go('login');
     });
 
+    function showSpinner() {
+        document.getElementsByClassName('spinner-container')[0].style.display = 'flex';
+    }
+
+    function hideSpinner() {
+        document.getElementsByClassName('spinner-container')[0].style.display = 'none';
+    }
+
     $rootScope.$on('loading:show', function() {
-        $ionicLoading.show({
-            template: 'Aguarde...',
-            animation: 'fade-in'
-        });
+        showSpinner();
     });
 
     $rootScope.$on('loading:hide', function() {
-        $ionicLoading.hide();
+        hideSpinner();
     });
 
     // $ionicPlatform.on('resume',function(){ $rootScope.refreshSaldo(); });

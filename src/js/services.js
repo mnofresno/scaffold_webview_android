@@ -33,7 +33,7 @@ angular.module('gastos.services', [])
 {
     var self = this;
 
-    var url = ApiEndPoint.get() + 'categoria/index';
+    var url = () => ApiEndPoint.get() + 'categoria/index';
 
     var promise = undefined;
 
@@ -55,7 +55,7 @@ angular.module('gastos.services', [])
 
     self.sync = function()
     {
-        return $http.get(url).then(function (response)
+        return $http.get(url()).then(function (response)
         {
             // The then function here is an opportunity to modify the response
             console.log("se llama al get categorias");
@@ -115,13 +115,13 @@ angular.module('gastos.services', [])
 {
     var self = this;
 
-    var url = ApiEndPoint.get() + 'usuario/index';
+    var url = () => ApiEndPoint.get() + 'usuario/index';
 
     self.query = function()
     {
         var usuario_actual_id = Auth.get().id;
         // $http returns a promise, which has a then function, which also returns a promise
-        var promise = $http.get(url + '/' + parseInt(usuario_actual_id)).then(function (response)
+        var promise = $http.get(url() + '/' + parseInt(usuario_actual_id)).then(function (response)
         {
             // The then function here is an opportunity to modify the response
             // The return value gets picked up by the then in the controller.
@@ -138,10 +138,10 @@ angular.module('gastos.services', [])
 {
     var self = this;
 
-    var url = ApiEndPoint.get() + 'reintegro';
+    var url = () => ApiEndPoint.get() + 'reintegro';
 
     self.Registrar = function(datosReintegro) {
-        var promise = $http.post(url + '/registrar', datosReintegro).then(function (response) {
+        var promise = $http.post(url() + '/registrar', datosReintegro).then(function (response) {
             // The then function here is an opportunity to modify the response
             console.log("se esta llamando al post");
             // The return value gets picked up by the then in the controller.
@@ -159,7 +159,7 @@ angular.module('gastos.services', [])
 {
     var self = this;
 
-    var url = ApiEndPoint.get() + 'gasto';
+    var url = () => ApiEndPoint.get() + 'gasto';
 
     var removeUndefined = function(json)
     {
@@ -187,7 +187,7 @@ angular.module('gastos.services', [])
             parametros = removeUndefined(parametrosBusqueda);
         }
 
-        var promise = $http({url: url + '/listado', data: parametros, method: "POST"}).then(function (response)
+        var promise = $http({url: url() + '/listado', data: parametros, method: "POST"}).then(function (response)
         {
             console.log("se llama al get");
             return response.data;
@@ -222,7 +222,7 @@ angular.module('gastos.services', [])
                                 token:            "esUnTokenProvisorio"
                             };
 
-        var promise = $http.post(url + '/registrar', parametros).then(function (response) {
+        var promise = $http.post(url() + '/registrar', parametros).then(function (response) {
                 // The then function here is an opportunity to modify the response
                 console.log("se esta llamando al post");
                 // The return value gets picked up by the then in the controller.
@@ -245,7 +245,7 @@ angular.module('gastos.services', [])
     {
         var usuario = Auth.get();
         var idusuario = usuario.id;
-        var promise = $http.get(url + '/resumen/' + idusuario +  '?incluirGastosTarjeta=' + incluirGastosTarjeta.toString())
+        var promise = $http.get(url() + '/resumen/' + idusuario +  '?incluirGastosTarjeta=' + incluirGastosTarjeta.toString())
           .then(function(response){
             console.log("SE OBTUVO EL RESUMEN: "+ JSON.stringify(response));
             if(response.status === 200)
@@ -261,7 +261,7 @@ angular.module('gastos.services', [])
     {
         var usuario = Auth.get();
         var idusuario = usuario.id;
-        var promise = $http.get(url + '/saldo/' + idusuario).then(function(response){
+        var promise = $http.get(url() + '/saldo/' + idusuario).then(function(response){
             if(response.status === 200)
             {
                 callback(response.data);
@@ -306,7 +306,7 @@ angular.module('gastos.services', [])
 
     self.mensuales = function()
     {
-        var promise = $http.get(url + '/mensuales').then(function (response)
+        var promise = $http.get(url() + '/mensuales').then(function (response)
         {
             return response.data;
         });
@@ -315,7 +315,7 @@ angular.module('gastos.services', [])
 
     self.queryMeses = function()
     {
-        var promise = $http.get(url + '/mesescongastos').then(function (response)
+        var promise = $http.get(url() + '/mesescongastos').then(function (response)
         {
             return response.data;
         });
@@ -324,7 +324,7 @@ angular.module('gastos.services', [])
 
     self.tiposMovimientos = function()
     {
-        var promise = $http.get(url + '/tiposmovimientos').then(function (response)
+        var promise = $http.get(url() + '/tiposmovimientos').then(function (response)
         {
             return response.data;
         });
@@ -333,7 +333,7 @@ angular.module('gastos.services', [])
 
     self.get = function(id)
     {
-        var promise = $http.get(url + '/' + id).then(function (response)
+        var promise = $http.get(url() + '/' + id).then(function (response)
         {
             return response.data;
         });
@@ -342,7 +342,7 @@ angular.module('gastos.services', [])
 
     self.queryByCategoria = function(filter, handler)
     {
-        $http({ url: url + "/listbycategoria",
+        $http({ url: url() + "/listbycategoria",
             data: filter,
             method: 'POST',
             contentType: 'application/json',
@@ -635,7 +635,7 @@ angular.module('gastos.services', [])
 {
     var self = this;
 
-    var url = ApiEndPoint.get();
+    var url = () => ApiEndPoint.get();
 
     self.solicitarResumen = function(callback)
     {
@@ -645,7 +645,7 @@ angular.module('gastos.services', [])
 
         var datosUsuario = { usuario: usuarioLogueado };
 
-        return $http.post(url + "solicitudes/resumen", datosUsuario).then(function(response){ callback(response.data); });
+        return $http.post(url() + "solicitudes/resumen", datosUsuario).then(function(response){ callback(response.data); });
     };
 
     return self;
@@ -733,10 +733,10 @@ angular.module('gastos.services', [])
 {
     var self = this;
 
-    var url = ApiEndPoint.get() + 'mensajes/';
+    var url = () => ApiEndPoint.get() + 'mensajes/';
     self.MarcarComoLeidos = function()
     {
-        $http.put(url + 'seen').then(function(response)
+        $http.put(url() + 'seen').then(function(response)
         {
             console.debug("Mensajes marcados como leidos");
         });
@@ -744,7 +744,7 @@ angular.module('gastos.services', [])
 
     self.ObtenerNoLeidos = function(callback)
     {
-        $http.get(url + 'notseen').then(callback);
+        $http.get(url() + 'notseen').then(callback);
     };
 
     return self;

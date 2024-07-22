@@ -13,7 +13,10 @@ angular.module('gastos.controllers', [])
     NotificacionesService,
     QrScanner,
     $http,
-    ApiEndPoint) {
+    ApiEndPoint,
+    $localStorage,
+    ENV
+) {
     var viewModel = $scope.viewModel = {isMenuOpen: false, showApp: true, isTransitioning: false};
     function initialize() {
         viewModel.mostrarPosicion = function() {
@@ -76,7 +79,20 @@ angular.module('gastos.controllers', [])
         };
 
         viewModel.saldo = "";
+        const envMap = { testing: 'QA', production: 'P', dev: 'D' };
+        const envKeys = Object.keys(envMap);
+        let envIndex = envKeys.indexOf(ENV.env);
 
+        viewModel.env = envMap[ENV.env];
+
+        viewModel.toggleEnvironment = function() {
+            envIndex = (envIndex + 1) % envKeys.length;
+            ENV.env = envKeys[envIndex];
+            viewModel.env = envMap[ENV.env];
+            ENV.set_env(ENV.env);
+            viewModel.sincronizarTodo();
+            $rootScope.$broadcast('env_changed', {env: ENV.env});
+        };
         viewModel.getSaldo = function() {
             Gasto.Saldo(function(r) {
                 $scope.$applyAsync(function() {
@@ -114,7 +130,7 @@ angular.module('gastos.controllers', [])
     }
 })
 
-.controller('ConfiguracionCtrl', function(ENV, $scope, $localStorage, Categoria) {
+.controller('ConfiguracionCtrl', function(ENV, $scope, $rootScope, $localStorage, Categoria) {
     const endpoints = ENV.apiEndpoint;
     var viewModel = $scope.viewModel = {
         saldoAutoRefresh: false,
@@ -124,8 +140,10 @@ angular.module('gastos.controllers', [])
     $scope.availableCategorias = [];
 
     viewModel.guardarConfig = function() {
+        $rootScope.$broadcast('loading:show');
         viewModel.categoriasVisibles = $scope.availableCategorias.filter(x => x.seleccionada).map(x => x.id);
         $localStorage.set('configuracion', {...viewModel, apiEndpoint: endpoints});
+        setTimeout(() => $rootScope.$broadcast('loading:hide'), 300);
     };
 
     viewModel.toggleCheck = function(categoria) {
@@ -135,14 +153,15 @@ angular.module('gastos.controllers', [])
     viewModel.toggleSaldoAutoRefresh = function() {
         viewModel.saldoAutoRefresh = !viewModel.saldoAutoRefresh;
     };
-
+    let forceUpdate = false;
     var initialize = function() {
-        Categoria.query().then(function(availableCategorias) {
+        Categoria.query(forceUpdate).then(function(availableCategorias) {
             $scope.availableCategorias = availableCategorias.map(x => ({
                 seleccionada: (viewModel.categoriasVisibles ?? []).includes(x.id),
                 id: x.id,
                 titulo: x.titulo
             }));
+            forceUpdate = false;
         });
     };
 

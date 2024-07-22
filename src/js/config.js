@@ -25,5 +25,13 @@ angular.module('gastos.config', [])
     }
     outputConfig.defaults = defaults;
     outputConfig.env = env;
+    outputConfig.set_env = (env) => {
+        if (Object.keys(defaults.apiEndpoint).includes(env)) {
+            $localStorage.set('environment', env)
+        } else {
+            throw new Error(`Invalid environment value trying to be set: ${env}`);
+        }
+
+    };
     return outputConfig;
 });
