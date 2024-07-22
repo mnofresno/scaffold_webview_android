@@ -8,7 +8,7 @@
     <div class="modal-content">
       <div>
         <span>
-          <center>
+          <div class="center-element">
             <table width="100%">
               <tr><td>Fecha Compra</td><td> <strong> {{ detalle.created_at | amDateFormat:'DD/MM/YYYY HH:mm:ss' }} </strong></td></tr>
               <tr><td>Fecha Pago</td><td> <strong> {{ detalle.fecha_pago | amDateFormat:'DD/MM/YYYY HH:mm:ss' }} </strong></td></tr>
@@ -19,7 +19,7 @@
               <tr><td>Comentario</td><td> <strong> <pre>{{ detalle.descripcion.length > 0 ? detalle.descripcion : '-No se registró comentario-' }}</pre> </strong></td></tr>
               <tr ng-if="movLista.tipo == 'R'"><td>Destinatario</td><td> <strong> {{ detalle.destinatario.name }} </strong></td></tr>
             </table>
-          </center>
+          </div>
         </span>
       </div>
       <div class="cuotas card responsive-sm" ng-if="detalle.tarjeta_credito && detalle.pago.cuotas.length > 0">

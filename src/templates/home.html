@@ -86,14 +86,16 @@
        </div>
        </p>
        <div ng-if="viewModel.mostrarCartel()" >
-          <center><span>Se va a registar {{viewModel.importeGasto}} en {{viewModel.categoriaSeleccionada.titulo}} a nombre de {{viewModel.usuario.nombre}}</span></center>
+          <div class="center-element"><span>Se va a registar {{viewModel.importeGasto}} en {{viewModel.categoriaSeleccionada.titulo}} a nombre de {{viewModel.usuario.nombre}}</span></div>
        </div>
-       <div>
-          <button ng-disabled="!viewModel.isValid()" ng-click="viewModel.registrarGasto()" class="button button-block button-positive">Registrar gasto</button>
-       </div>
-       <div>
-          <button ng-click="viewModel.limpiarFormulario()" class="button button-block button-positive">Limpiar</button>
-       </div>
+       <div class="row footer-container">
+            <div class="col">
+                <button ng-disabled="!viewModel.isValid()" ng-click="viewModel.registrarGasto()" class="button button-block button-positive">Registrar gasto</button>
+            </div>
+            <div class="col">
+                <button ng-click="viewModel.limpiarFormulario()" class="button button-block button-positive">Limpiar</button>
+            </div>
+        </div>
        </div>
     </div>
  </div>

@@ -8,7 +8,7 @@
   <div class="ion-content" ng-controller="PosicionCtrl">
         <div>
                 <span>
-                    <center>
+                    <div class="center-element">
                         <span ng-if="viewModel.mensajeRegistro !== undefined" ng-click="ventana.hide()"><span ng-bind-html="viewModel.mensajeRegistro"></span><p></p></span>
                         <div class="item container" ng-if="viewModel.mostrarResumen" >
                             <table width="100%">
@@ -37,7 +37,7 @@
 
                             </table>
                         </div>
-                    </center>
+                    </div>
                 </span>
         </div>
   </div>
