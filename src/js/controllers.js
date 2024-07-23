@@ -1,3 +1,4 @@
+import './revision';
 angular.module('gastos.controllers', [])
 
 .controller('AppCtrl', function(
@@ -79,14 +80,23 @@ angular.module('gastos.controllers', [])
 
         viewModel.env = envMap[ENV.env];
 
+        const showEnvironment = () => {
+            $http({url: ApiEndPoint.get() + 'configuracion/version'}).then((response) => {
+                viewModel.backend_rev = 'br:' + response.data.version.substring(0, 4);
+            });
+            viewModel.env = envMap[ENV.env];
+            viewModel.frontend_rev = 'fr:' + buildRevision.sha1.substring(0, 4);
+        };
+
         viewModel.toggleEnvironment = function() {
             envIndex = (envIndex + 1) % envKeys.length;
             ENV.env = envKeys[envIndex];
-            viewModel.env = envMap[ENV.env];
             ENV.set_env(ENV.env);
             viewModel.sincronizarTodo();
+            showEnvironment();
             $rootScope.$broadcast('env_changed', {env: ENV.env});
         };
+
         viewModel.getSaldo = function() {
             Gasto.Saldo(function(r) {
                 $scope.$applyAsync(function() {
@@ -94,6 +104,7 @@ angular.module('gastos.controllers', [])
                 });
             });
         };
+
         $rootScope.refreshSaldo = viewModel.getSaldo;
 
         viewModel.scanQrCode = function() {
@@ -115,6 +126,8 @@ angular.module('gastos.controllers', [])
         NotificacionesService.setNotificationCallback(function(data) {
             if (data === 'update_saldo') $scope.$applyAsync(viewModel.getSaldo);
         });
+
+        showEnvironment();
     }
 
     if (window.cordova) {

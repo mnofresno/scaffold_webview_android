@@ -18,3 +18,4 @@ node_modules/
 /platforms/
 www
 auto-update/public/revision.js
+src/js/revision.js

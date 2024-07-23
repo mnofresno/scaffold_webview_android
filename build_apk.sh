@@ -1,11 +1,14 @@
 #!/bin/bash
 
+cd "$(dirname "$0")"
+
 IMAGE_NAME="ghcr.io/mnofresno/cordova-build-yarn-webpack:3.0.0"
 CONTAINER_NAME="android-build"
 WORKING_DIR="/app"
 APK_PATH="platforms/android/app/build/outputs/apk/debug/app-debug.apk"
 APK_PATH_INSIDE_CONTAINER="/app/$APK_PATH"
 
+./auto-update/create_revision.sh
 
 run_docker_command() {
   docker exec $CONTAINER_NAME "$@"

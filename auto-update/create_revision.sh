@@ -1,2 +1,6 @@
 #!/bin/bash
-echo "const sha1=\"$(git rev-parse HEAD)\";" > auto-update/public/revision.js
+
+cd "$(dirname "$0")"
+
+echo "window.buildRevision = {sha1:\"$(git rev-parse HEAD)\"};" > ./public/revision.js
+cp ./public/revision.js ../src/js/

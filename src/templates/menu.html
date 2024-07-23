@@ -51,7 +51,7 @@
             <i class="icon ion-navicon" style="font-size: 18px;"></i> <strong>Control Gastos</strong>
         </button>
         <button  class="saldo-button" ng-click="viewModel.toggleEnvironment()">
-            <span><b>{{ viewModel.env }}</b></span>
+            <span style="font-size: small;"><b>{{ viewModel.env }}</b></span><span style="font-size: xx-small;"><br/>{{ viewModel.frontend_rev }} / {{ viewModel.backend_rev }}</span>
         </button>
         <button ng-click="viewModel.getSaldo()" class="saldo-button">
             <strong>{{ viewModel.saldo }}</strong> <i class="ion-loop"></i>
