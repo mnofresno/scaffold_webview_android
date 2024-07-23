@@ -1,6 +1,6 @@
 <div class="item col-header item-icon-right">
     <div class="flex-container wrap">
-        <div ng-repeat="column in data.columns | filter: { show: true } " ng-click="sortBy(column.id)">
+        <div ng-repeat="column in data.columns " ng-click="sortBy(column.id)">
             <div class="column" ng-class="{ 'underlined' : data.sortOn === column.id }">{{column.name}}&nbsp;</div>
             <div class="column-sort">
                 <i ng-class="{'ion-chevron-up' : data.sortReverse === false, 'ion-chevron-down' : data.sortReverse === true} " ng-if="data.sortOn === column.id"></i>
@@ -9,9 +9,9 @@
     </div>
 </div>
 
-<div class="item low-pad-item item-icon-right" ng-repeat="item in data.items track by item.id | orderBy:sortData:data.sortReverse " ng-click="getDetalle(item)">
+<div class="item low-pad-item item-icon-right" ng-repeat="item in data.items track by item.id" ng-click="getDetalle(item)">
     <div class="flex-container wrap">
-        <div ng-repeat="column in data.columns | filter: { show: true }">
+        <div ng-repeat="column in data.columns">
             <div class="column">{{item[column.id]}}&nbsp;</div>
         </div>
     </div>

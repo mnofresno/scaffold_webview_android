@@ -9,7 +9,7 @@
         <li class="menu-item" ng-click="viewModel.navigate('app.listadoGastos')">
             <i class="icon ion-ios-list-outline"></i> Listado de movimientos
         </li>
-        <li class="menu-item" ng-click="viewModel.mostrarPosicion()">
+        <li class="menu-item" ng-click="viewModel.navigate('app.posicion')">
             <i class="icon ion-speedometer"></i> Mostrar posición
         </li>
         <li class="menu-item" ng-click="viewModel.navigate('app.Configuracion')">
@@ -27,9 +27,9 @@
         <li class="menu-item" ng-click="viewModel.sincronizarTodo()">
             <i class="icon ion-loop"></i> Sincronizar todo
         </li>
-        <!-- <li class="menu-item" ng-click="viewModel.navigate('app.offline')">
+        <li class="menu-item" ng-click="viewModel.navigate('app.offline')">
             <i class="icon ion-android-globe"></i> Gastos offline {{viewModel.movimientosPendientes()}}
-        </li> -->
+        </li>
         <!-- <li class="menu-item" ng-click="viewModel.solicitarResumen()">
             <i class="icon ion-email"></i> Solicitar Resumen
         </li> -->

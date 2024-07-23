@@ -3,7 +3,6 @@ angular.module('gastos.controllers', [])
 .controller('AppCtrl', function(
     $scope,
     $state,
-    PosicionService,
     Gasto,
     Categoria,
     SolicitudService,
@@ -19,11 +18,6 @@ angular.module('gastos.controllers', [])
 ) {
     var viewModel = $scope.viewModel = {isMenuOpen: false, showApp: true, isTransitioning: false};
     function initialize() {
-        viewModel.mostrarPosicion = function() {
-            viewModel.isMenuOpen = false;
-            PosicionService.show($scope);
-        };
-
         viewModel.navigate = function(state) {
             if (!viewModel.isTransitioning) {
                 viewModel.isMenuOpen = false;
@@ -172,19 +166,11 @@ angular.module('gastos.controllers', [])
     }
 })
 
-.controller('PosicionCtrl', function($scope, Gasto) {
-    if (!$scope.viewModel) {
-      $scope.viewModel = {};
-    }
+.controller('PosicionCtrl', function($scope, Gasto, $stateParams) {
+    $scope.viewModel = { mensajeRegistro: $stateParams.flash_msg, show_offline_link: $stateParams.show_offline_link };
     var viewModel = $scope.viewModel;
 
     viewModel.incluirTarjeta = false;
-
-    viewModel.cerrar = function () {
-      if ($scope.viewModel.ventana) {
-        $scope.viewModel.ventana.remove();
-      }
-    };
 
     viewModel.loadResumen = function() {
       Gasto.Resumen(viewModel.incluirTarjeta).then(function(respuesta) {
@@ -324,11 +310,10 @@ angular.module('gastos.controllers', [])
 })
 
 .controller('ReintegroCtrl', function($scope,
-                                      Auth,
-                                      Usuario,
-                                      Reintegro,
-                                      PosicionService)
-{
+    Auth,
+    Usuario,
+    Reintegro,
+    $state) {
 
     var viewModel = $scope.viewModel = {
                                             usuarioDestino:         {id: 0, name: ''},
@@ -353,7 +338,7 @@ angular.module('gastos.controllers', [])
                         location.href = location.origin;
                     }
                     viewModel.limpiarFormulario();
-                    PosicionService.show($scope, "Se registro el reintegro OK.");
+                    $state.go('app.posicion', {flash_msg: "Se registro el reintegro OK."});
                 });
     };
 
@@ -394,7 +379,6 @@ angular.module('gastos.controllers', [])
     Categoria,
     Gasto,
     Auth,
-    PosicionService,
     $http,
     ApiEndPoint
 ) {
@@ -473,12 +457,6 @@ angular.module('gastos.controllers', [])
 
     sincronizarCategorias();
 
-
-    viewModel.cerrarPosicion = function()
-    {
-        PosicionService.close();
-    };
-
     viewModel.limpiarFormulario = function()
     {
         viewModel.importeGasto            = "";
@@ -532,28 +510,22 @@ angular.module('gastos.controllers', [])
           viewModel.cuotasTarjeta)
           .then(function(respuesta)
           {
-              if(respuesta.logout == "1")
-              {
-                  Auth.logout();
-                  location.href = location.origin;
-              }
+            if(respuesta.logout == "1") {
+                Auth.logout();
+                location.href = location.origin;
+            }
 
-              if(respuesta.resumen !== undefined)
-              {
-                  PosicionService.show($scope, "Se registro el gasto OK.");
-              }
-              else
-              {
-                  PosicionService.show($scope, "Se registro el gasto localmente.");
-              }
+            if(respuesta.resumen !== undefined) {
+                $state.go('app.posicion', {flash_msg: "Se registro el gasto OK."});
+            } else {
+                $state.go('app.posicion', {flash_msg: "Se registro el gasto localmente.", show_offline_link:true});
+            }
 
               // FIXME: Fix scroll delegate
             //   $ionicScrollDelegate.scrollTop();
           })
-          .catch(function(){
-
-              PosicionService.show($scope, "Hubo un error al registrar el gasto. Se registró de manera off-line. <a href=\"#/app/offline\" >Ir a gastos offline</a>");
-
+          .catch(function(e){
+                $state.go('app.posicion', {flash_msg: "Hubo un error al registrar el gasto. Se registró de manera off-line", show_offline_link: true});
           })
           .finally(function()
           {
@@ -642,19 +614,16 @@ angular.module('gastos.controllers', [])
       fecha_pago:      'Fecha'
     };
 
-    Categoria.query().then(function(data)
-    {
-      categorias = data;
-      viewModel.actualizar();
+    Categoria.query().then(function(data) {
+        categorias = data;
+        viewModel.actualizar();
     });
 
-    viewModel.actualizar = function()
-    {
+    viewModel.actualizar = function() {
         var i = 1;
         var storedData = $localStorage.get('movimientos');
         movimientos = storedData === 'undefined' ? [] : storedData;
-        lodash.forEach(movimientos, function(m)
-        {
+        movimientos.forEach(function(m) {
             if(!m.id)
             {
                 m.id = i;
@@ -667,9 +636,8 @@ angular.module('gastos.controllers', [])
                 m.importeHuman = m.importe.toLocaleString('es');
             }
 
-            if(!m.categoriaTitulo)
-            {
-                var c = lodash.find(categorias, { id: m.categoria })
+            if(!m.categoriaTitulo) {
+                var c = categorias.find(x => x.id === m.categoria)
                 m.categoriaTitulo =  c.titulo;
             }
         });
@@ -677,16 +645,13 @@ angular.module('gastos.controllers', [])
         viewModel.saveList();
     };
 
-    viewModel.deleteItem = function(item)
-    {
-      var m = lodash.remove(movimientos, { id: item.id });
-
-      viewModel.saveList();
-      viewModel.actualizar();
+    viewModel.deleteItem = function(item) {
+        movimientos = movimientos.filter(x => x.id !== item.id);
+        viewModel.saveList();
+        viewModel.actualizar();
     };
 
-    viewModel.saveList = function()
-    {
+    viewModel.saveList = function() {
         $localStorage.set('movimientos', movimientos);
     };
 })

@@ -7,7 +7,7 @@ import config from './config';
 import interceptors from './interceptors';
 import filters from './filters';
 import directives from './directives';
-import {$ionicPlatform, $ionicHistory, $ionicViewService, $ionicLoading, md5, moment} from './ionic-cordova';
+import {$ionicPlatform, $ionicHistory, $ionicViewService, $ionicLoading, moment} from './ionic-cordova';
 import '@uirouter/angularjs';
 import 'ng-cordova';
 import 'lodash';
@@ -33,13 +33,11 @@ app.config(function($stateProvider) {
         templateUrl: 'templates/menu.html',
         controller: 'AppCtrl'
     })
-
     .state('login', {
         url: '/login',
         templateUrl: 'templates/login.html',
         controller: 'LoginCtrl'
     })
-
     .state('app.home', {
         url: '/home',
         views: {
@@ -49,7 +47,19 @@ app.config(function($stateProvider) {
         }
       }
     })
-
+    .state('app.posicion', {
+        url: '/posicion',
+        params: {
+            flash_msg: null,
+            show_offline_link: false
+        },
+        views: {
+        'menuContent': {
+          templateUrl: 'templates/posicion.html',
+          controller: 'PosicionCtrl'
+        }
+      }
+    })
     .state('app.listadoGastos', {
       url: '/listado',
       views: {

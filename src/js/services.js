@@ -2,33 +2,6 @@ import MD5 from "crypto-js/md5";
 
 angular.module('gastos.services', [])
 
-.service('PosicionService', function($sce, $gastosPopup) {
-    var self = this;
-
-    self.show = function($scope, mensaje) {
-      if (!$scope.viewModel) {
-        $scope.viewModel = {};
-      }
-
-      $scope.viewModel.mensajeRegistro = $sce.trustAsHtml(mensaje);
-
-      $gastosPopup.fromTemplateUrl('templates/posicion.html', {
-        scope: $scope
-      }).then(function(modal) {
-        $scope.viewModel.ventana = self.modal = modal;
-        $scope.viewModel.ventana.show();
-      });
-    };
-
-    self.close = function() {
-      if (self.modal !== undefined) {
-        self.modal.remove();
-      }
-    };
-
-    return self;
-  })
-
 .service('Categoria', function($http, ENV, $localStorage, $q, Network, ApiEndPoint)
 {
     var self = this;
@@ -275,7 +248,7 @@ angular.module('gastos.services', [])
     {
         var idusuario = usuario.id;
         var idcategoria = categoria.id;
-        var token = MD5(usuario.nombre + "." + categoria.titulo + "." + parseFloat(importe));
+        var token = MD5(usuario.nombre + "." + categoria.titulo + "." + parseFloat(importe)).toString();
         // $http returns a promise, which has a then function, which also returns a promise
 
 
