@@ -300,13 +300,16 @@ angular.module('gastos.controllers', [])
     initialize();
 })
 
-.controller('GastosMensualesCtrl', function($scope,
-                                            Gasto)
-{
-
+.controller('GastosMensualesCtrl', function(
+    $scope,
+    Gasto) {
     var viewModel = $scope.viewModel = {};
 
-    Gasto.mensuales().then(function(d){        viewModel.listado = d;    });
+    viewModel.update = function () {
+        Gasto.mensuales().then(function(d){        viewModel.listado = d;    });
+    };
+
+    viewModel.update();
 })
 
 .controller('ReintegroCtrl', function($scope,

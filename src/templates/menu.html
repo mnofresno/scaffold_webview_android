@@ -1,6 +1,6 @@
 <div class="menu-container" ng-class="{ 'menu-open': viewModel.isMenuOpen }">
     <div class="menu-header">
-        <h1>Menú</h1>
+        <h4>Menú</h4>
     </div>
     <ul class="menu-list">
         <li class="menu-item" ng-click="viewModel.navigate('app.home')">
@@ -48,7 +48,7 @@
 <div class="content-container" ng-class="{ 'menu-open': viewModel.isMenuOpen }">
     <div class="nav-bar">
         <button class="menu-toggle" ng-click="viewModel.toggleMenu($event)" type="button">
-            <i class="icon ion-navicon"></i> <strong>Control Gastos</strong>
+            <i class="icon ion-navicon" style="font-size: 18px;"></i> <strong>Control Gastos</strong>
         </button>
         <button  class="saldo-button" ng-click="viewModel.toggleEnvironment()">
             <span><b>{{ viewModel.env }}</b></span>

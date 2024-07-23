@@ -1,21 +1,27 @@
-<div class="ion-view" cache-view="false" view-title="Gastos mensuales">
-    <div class="ion-content" padding="true" class="has-header">
-        <div class="item container">
-            <table width="100%">
-
+<div class="ion-view lista-mensuales" cache-view="false" view-title="Gastos mensuales">
+    <div class="ion-content row" padding="true" class="has-header">
+        <div class="item container col">
+            <table>
                 <thead>
-                    <th>Mes</th>
-                    <th>Total</th>
+                    <tr>
+                        <th class="auto-adjust text-left">Mes</th>
+                        <th class="fixed-width-20">Inc. (%)</th>
+                        <th class="auto-adjust">Total ($)</th>
+                    </tr>
                 </thead>
                 <tbody ng-repeat="item in viewModel.listado">
                     <tr>
-                        <td>{{item.mes}}</td>
-                        <td>{{item.importe}}</td>
+                        <td class="auto-adjust text-left">{{item.mes}}</td>
+                        <td class="fixed-width-20">{{item.incremento_mensual}}</td>
+                        <td class="auto-adjust">{{item.importe}}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
-
-
+    <div class="row footer-container">
+        <div class="col">
+            <button class="button button-balanced" ng-click="viewModel.update()">Actualizar</button>
+        </div>
+    </div>
 </div>
