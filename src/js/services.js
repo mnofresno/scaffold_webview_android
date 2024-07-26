@@ -495,12 +495,13 @@ angular.module('gastos.services', [])
         });
     };
 
-    self.updateFCM = function(fcmToken, callback)
-    {
+    self.updateFCM = function(fcmToken, callback) {
         var usuario = self.get();
-        if(!usuario) return;
+        if(!usuario) {
+            return;
+        }
         var usuario_actual_id = usuario.id;
-        $http.put(ApiEndPoint.get() + 'usuario/' + usuario_actual_id + '/fcm', { fcm_token: fcmToken }).success(callback);
+        $http.put(ApiEndPoint.get() + 'usuario/' + usuario_actual_id + '/fcm', { fcm_token: fcmToken }).then(callback);
     };
 
     return self;
@@ -630,43 +631,45 @@ angular.module('gastos.services', [])
 
     var notificationCallback = null;
 
-    self.setNotificationCallback = function(callback)
-    {
+    self.setNotificationCallback = function(callback) {
         notificationCallback = callback;
     };
 
-    self.saveToken = function(token)
-    {
-        Auth.updateFCM(token, function(response)
-        {
+    self.saveToken = function(token) {
+        Auth.updateFCM(token, function(response) {
             $localStorage.set('fcm_token_stored', true);
         });
     };
 
-    self.getToken = function()
-    {
-        if(!$localStorage.has('fcm_token_stored'))
-        {
-            window.FirebasePlugin.getToken(self.saveToken);
-        }
+    self.getToken = function() {
+        cordova.plugins.firebase.messaging.getToken().then(function(token) {
+            console.log("Firebase token: " + token);
+            if(!$localStorage.has('fcm_token_stored')) {
+                self.saveToken(token);
+            }
+        });
     };
 
-    self.installTokenRefresher = function()
-    {
-        window.FirebasePlugin.onTokenRefresh(function(token)
-        {
+    self.installTokenRefresher = function() {
+        cordova.plugins.firebase.messaging.onTokenRefresh(function(token) {
             $localStorage.delete('fcm_token_stored');
+            console.log("Firebase token refreshed: " + token);
             self.saveToken(token);
         });
     };
 
-    self.installNotificationHandler = function()
-    {
-        window.FirebasePlugin.onNotificationOpen(self.notificationHandler);
+    self.installNotificationHandler = function() {
+        cordova.plugins.firebase.messaging.onMessage(function(payload) {
+            console.log("New foreground FCM message: ", payload);
+            self.notificationHandler(payload);
+        });
+        cordova.plugins.firebase.messaging.onBackgroundMessage(function(payload) {
+            console.log("New background FCM message: ", payload);
+            self.notificationHandler(payload);
+        });
     };
 
-    self.notificationHandler = function(data)
-    {
+    self.notificationHandler = function(data) {
         console.debug(data);
         if(notificationCallback)
         {
@@ -689,14 +692,22 @@ angular.module('gastos.services', [])
         MensajesService.MarcarComoLeidos();
     };
 
-    self.registerCallbacks = function()
-    {
-        if(!window.FirebasePlugin) return;
+    self.requestPermissionGrant = function () {
+        cordova.plugins.firebase.messaging.requestPermission().then(function() {
+            console.log("Notification permission granted.");
+        }).catch(function() {
+            console.log("Notification permission denied.");
+        });
+    };
+
+    self.registerCallbacks = function() {
+        if(!cordova.plugins.firebase) return;
 
         self.getToken();
         self.installTokenRefresher();
         self.installNotificationHandler();
         Auth.setLoggedInCallback(self.getToken);
+        self.requestPermissionGrant();
     };
 
     return self;

@@ -7,7 +7,6 @@ CONTAINER_NAME="android-build"
 WORKING_DIR="/app"
 APK_PATH="platforms/android/app/build/outputs/apk/debug/app-debug.apk"
 APK_PATH_INSIDE_CONTAINER="/app/$APK_PATH"
-
 ./auto-update/create_revision.sh
 
 run_docker_command() {
@@ -20,6 +19,8 @@ docker run -d --name $CONTAINER_NAME \
     --network host \
     -e BUILD_TOOLS_VERSION="34.0.0" \
     $IMAGE_NAME tail -f /dev/null
+
+run_docker_command cp google-services.json platforms/android/app/
 
 PACKAGE_NAME=$(run_docker_command /app/get_package_name.sh "$APK_PATH_INSIDE_CONTAINER" | tr -d '\r')
 MAIN_ACTIVITY="$PACKAGE_NAME/.MainActivity"

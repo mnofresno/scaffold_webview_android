@@ -19,3 +19,4 @@ node_modules/
 www
 auto-update/public/revision.js
 src/js/revision.js
+google-services.json

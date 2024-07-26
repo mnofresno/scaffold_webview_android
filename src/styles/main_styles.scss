@@ -221,6 +221,7 @@ body {
     box-sizing: border-box;
     bottom:0;
     position:fixed;
+    z-index: 99999;
 }
 
 .center-element {
