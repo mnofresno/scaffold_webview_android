@@ -7,20 +7,25 @@
           </div>
        </div>
        <div class="row">
-          <div class="col">
-             <label for="comentarioGasto" class="item item-input"><span class="input-label"><strong>Comentario:</strong></span>
-             <input id="comentarioGasto" type="text" ng-model="viewModel.comentarioGasto" /></label>
-          </div>
-       </div>
-       <div class="row">
-          <div class="col">
-             <label>
-             <input type="checkbox" ng-model="viewModel.tarjeta_credito" ng-true-value="true" ng-false-value="false">
-             Tarjeta de crédito
-             </label>
-          </div>
-       </div>
-       <div class="row" ng-if="viewModel.tarjeta_credito">
+            <div class="col">
+                <label for="comentarioGasto" class="item item-input">
+                    <span class="input-label"><strong>Comentario:</strong></span>
+                    <div class="input-group">
+                        <input id="comentarioGasto" type="text" class="form-control" ng-model="viewModel.comentarioGasto" />
+                        <i class="fa fa-pencil"></i>
+                    </div>
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label>
+                    <input type="checkbox" ng-model="viewModel.tarjeta_credito" ng-true-value="true" ng-false-value="false">
+                    Tarjeta de crédito
+                </label>
+            </div>
+        </div>
+        <div class="row" ng-if="viewModel.tarjeta_credito">
           <div class="col">
              <label for="cuotasTarjeta" class="item item-input"><span class="input-label"><strong>Cuotas:</strong></span>
              <input style="font-size:25px; font-family: monospace;" id="cuotasTarjeta" type="number" class = "item text-right item-input" ng-model="viewModel.cuotasTarjeta" step="any"></label>

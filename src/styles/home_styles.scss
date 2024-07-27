@@ -1,0 +1,23 @@
+.toggle-password {
+    cursor: pointer;
+}
+
+.input-group {
+    position: relative;
+    width: 100%;
+}
+
+.input-group .form-control {
+    width: 100%; /* Ajusta el ancho del input */
+    padding-right: 30px; /* Añade espacio para el icono */
+    box-sizing: border-box; /* Asegura que el padding no afecta el ancho total */
+    border: none; /* Elimina el borde adicional */
+}
+
+.input-group .fa-pencil {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; /* Asegura que el icono no interfiere con la entrada de texto */
+}

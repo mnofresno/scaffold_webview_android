@@ -10,9 +10,12 @@
                 <span class="input-label">Usuario/E-mail:</span>
                 <input type="text" ng-model="viewModel.usuario.nombre"/>
             </label>
-            <label class="item item-input">
+            <label class="item item-input password-container">
                 <span class="input-label">Clave:</span>
-                <input type="password" ng-model="viewModel.usuario.clave"/>
+                <input type="password" id="password" ng-model="viewModel.usuario.clave"/>
+                <span class="toggle-password" ng-click="viewModel.togglePassword()">
+                    <i class="fa fa-eye" id="toggleEye"></i>
+                </span>
             </label>
         </div>
         <div class="list" ng-if="!viewModel.mostrarFormulario()">

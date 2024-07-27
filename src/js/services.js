@@ -701,7 +701,7 @@ angular.module('gastos.services', [])
     };
 
     self.registerCallbacks = function() {
-        if(!cordova.plugins.firebase) return;
+        if(!window.cordova || !window.cordova.plugins.firebase) return;
 
         self.getToken();
         self.installTokenRefresher();

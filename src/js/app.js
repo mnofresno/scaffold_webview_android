@@ -1,5 +1,7 @@
 import '../styles/ionic.app.scss';
 import '../styles/main_styles.scss';
+import '../styles/login_styles.scss';
+import '../styles/home_styles.scss';
 import angular from 'angular';
 import controllers from './controllers';
 import services from './services';

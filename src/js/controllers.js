@@ -1,4 +1,5 @@
 import './revision';
+
 angular.module('gastos.controllers', [])
 
 .controller('AppCtrl', function(
@@ -551,17 +552,22 @@ angular.module('gastos.controllers', [])
 })
 
 .controller('LoginCtrl', function($scope, $state, Auth, $gastosPopup, AutoUpdater) {
-     var viewModel = $scope.viewModel =
-        {
-            usuario: {
-                        clave: '',
-                        nombre: ''
-                     },
-            errorLogin: false,
-        };
+    var viewModel = $scope.viewModel = {
+        usuario: {
+            clave: '',
+            nombre: ''
+        },
+        errorLogin: false,
+    };
 
-    viewModel.mostrarFormulario = function()
-    {
+    viewModel.togglePassword = function () {
+        let passwordElement = document.getElementById('password');
+        passwordElement.type = passwordElement.type === 'password'
+            ? 'text'
+            : 'password';
+    };
+
+    viewModel.mostrarFormulario = function() {
         return !viewModel.errorLogin;
     };
 

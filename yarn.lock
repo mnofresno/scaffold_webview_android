@@ -1078,7 +1078,7 @@ cordova-plugin-push@^0.0.1:
 
 "cordova-plugin-qrscanner-androidx@git+https://github.com/i-mediasolutions/cordova-plugin-qrscanner-androidx.git":
   version "3.0.6"
-  resolved "git+ssh://git@github.com/i-mediasolutions/cordova-plugin-qrscanner-androidx.git#368563d7be2912a1aca63e623720b6b90717b0a3"
+  resolved "git+https://github.com/i-mediasolutions/cordova-plugin-qrscanner-androidx.git#368563d7be2912a1aca63e623720b6b90717b0a3"
   dependencies:
     natives "^1.1.6"
     qrcode-reader "^1.0.4"
