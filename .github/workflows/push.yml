@@ -53,6 +53,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: write google-service.json secrets
+        run: |
+            echo '${{ secrets.GOOGLE_SERVICES_FCM_KEY }}' > ./google-services.json
+
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:

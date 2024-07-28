@@ -20,8 +20,6 @@ docker run -d --name $CONTAINER_NAME \
     -e BUILD_TOOLS_VERSION="34.0.0" \
     $IMAGE_NAME tail -f /dev/null
 
-run_docker_command cp google-services.json platforms/android/app/
-
 PACKAGE_NAME=$(run_docker_command /app/get_package_name.sh "$APK_PATH_INSIDE_CONTAINER" | tr -d '\r')
 MAIN_ACTIVITY="$PACKAGE_NAME/.MainActivity"
 
@@ -33,6 +31,9 @@ if [ -f "$APK_PATH" ]; then
 fi
 run_docker_command cordova prepare
 run_docker_command cordova platform add android
+
+run_docker_command cp google-services.json platforms/android/app/
+
 run_docker_command cordova build android
 
 while [[ "$#" -gt 0 ]]; do
