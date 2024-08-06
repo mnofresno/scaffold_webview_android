@@ -2,8 +2,20 @@
     <div class="ion-content" padding="true" class="has-header col-xs-12">
        <div class="row">
           <div class="col">
-             <label for="importeGasto" class="item item-input"><span class="input-label"><strong>Importe:</strong></span>
-             <input style="font-size:25px; font-family: monospace;" id="importeGasto" type="number" class = "item text-right item-input" ng-model="viewModel.importeGasto" step="any"></label>
+            <label for="importeGasto" class="item item-input">
+                <span class="input-label"><strong>Importe:</strong></span>
+                <div class="input-group" style="display: flex; align-items: center;">
+                    <i class="fa fa-dollar" style="font-size:25px; margin-right: 5px;"></i>
+                    <input
+                        style="font-size:25px; font-family: monospace; flex: 1;"
+                        id="importeGasto"
+                        type="number"
+                        class="item text-right item-input"
+                        ng-model="viewModel.importeGasto"
+                        step="any"
+                    />
+                </div>
+            </label>
           </div>
        </div>
        <div class="row">

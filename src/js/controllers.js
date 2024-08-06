@@ -16,12 +16,20 @@ angular.module('gastos.controllers', [])
     $http,
     ApiEndPoint,
     $localStorage,
+    EnvChanger,
     ENV
 ) {
     var viewModel = $scope.viewModel = {isMenuOpen: false, showApp: true, isTransitioning: false};
     function initialize() {
+        const onExitQrCamera = () => {
+            QrScanner.hideAndDestroy();
+            viewModel.showApp = true;
+            document.removeEventListener('backbutton', onExitQrCamera, false);
+        };
+
         viewModel.navigate = function(state) {
             if (!viewModel.isTransitioning) {
+                onExitQrCamera();
                 viewModel.isMenuOpen = false;
                 viewModel.isTransitioning = true;
                 $state.go(state).finally(function() {
@@ -75,27 +83,18 @@ angular.module('gastos.controllers', [])
         };
 
         viewModel.saldo = "";
-        const envMap = { testing: 'QA', production: 'P', dev: 'D' };
-        const envKeys = Object.keys(envMap);
-        let envIndex = envKeys.indexOf(ENV.env);
 
-        viewModel.env = envMap[ENV.env];
-
-        const showEnvironment = () => {
-            $http({url: ApiEndPoint.get() + 'configuracion/version'}).then((response) => {
-                viewModel.backend_rev = 'br:' + response.data.version.substring(0, 4);
-            });
-            viewModel.env = envMap[ENV.env];
-            viewModel.frontend_rev = 'fr:' + buildRevision.sha1.substring(0, 4);
+        const refresh_env = (result) => {
+            viewModel.backend_rev = result.backend_rev;
+            viewModel.env = result.current_env;
+            viewModel.frontend_rev = result.frontend_rev;
         };
 
         viewModel.toggleEnvironment = function() {
-            envIndex = (envIndex + 1) % envKeys.length;
-            ENV.env = envKeys[envIndex];
-            ENV.set_env(ENV.env);
-            viewModel.sincronizarTodo();
-            showEnvironment();
-            $rootScope.$broadcast('env_changed', {env: ENV.env});
+            EnvChanger.toggle((result) => {
+                refresh_env(result);
+                Auth.logout();
+            });
         };
 
         viewModel.getSaldo = function() {
@@ -107,10 +106,12 @@ angular.module('gastos.controllers', [])
         };
 
         $rootScope.refreshSaldo = viewModel.getSaldo;
-
+        $rootScope.$on('env_changed', () => viewModel.sincronizarTodo());
         viewModel.scanQrCode = function() {
             viewModel.isMenuOpen = false;
             viewModel.showApp = false;
+            document.addEventListener('backbutton', onExitQrCamera, false);
+
             QrScanner.scan(function(scanResult) {
                 viewModel.showApp = true;
                 var code = scanResult.text;
@@ -120,7 +121,14 @@ angular.module('gastos.controllers', [])
                     console.debug(data);
                 };
 
-                $http({ url: ApiEndPoint.get() + 'usuario/qrcodelogin', method: 'POST', data: loginData }).then(callback);
+                $http({
+                    url: ApiEndPoint.get() + 'usuario/qrcodelogin',
+                    method: 'POST',
+                    data: loginData
+                }).then(callback)
+                .finally(() => {
+                    document.removeEventListener('backbutton', onExitQrCamera, false);
+                });
             });
         };
 
@@ -128,7 +136,8 @@ angular.module('gastos.controllers', [])
             if (data === 'update_saldo') $scope.$applyAsync(viewModel.getSaldo);
         });
 
-        showEnvironment();
+        EnvChanger.fetchEnvironment(refresh_env);
+        viewModel.getSaldo();
     }
 
     if (window.cordova) {
@@ -165,7 +174,7 @@ angular.module('gastos.controllers', [])
     var initialize = function() {
         Categoria.query(forceUpdate).then(function(availableCategorias) {
             $scope.availableCategorias = availableCategorias.map(x => ({
-                seleccionada: (viewModel.categoriasVisibles ?? []).includes(x.id),
+                seleccionada: (ENV.categoriasVisibles ?? []).includes(x.id),
                 id: x.id,
                 titulo: x.titulo
             }));
@@ -551,13 +560,35 @@ angular.module('gastos.controllers', [])
     };
 })
 
-.controller('LoginCtrl', function($scope, $state, Auth, $gastosPopup, AutoUpdater) {
+.controller('LoginCtrl', function($scope, $state, Auth, $gastosPopup, AutoUpdater, EnvChanger) {
     var viewModel = $scope.viewModel = {
         usuario: {
             clave: '',
             nombre: ''
         },
         errorLogin: false,
+        envTogglerIsCollapsed: true,
+        current_env: '',
+        backend_rev: '',
+        frontend_rev: ''
+    };
+
+    const refresh_env = (result) => {
+        viewModel.current_env = result.current_env;
+        viewModel.backend_rev = result.backend_rev;
+        viewModel.frontend_rev = result.frontend_rev;
+    };
+
+    EnvChanger.fetchEnvironment(refresh_env, true);
+
+    viewModel.toggleShowEnvToggler = function () {
+        viewModel.envTogglerIsCollapsed = !viewModel.envTogglerIsCollapsed;
+    };
+
+    viewModel.toggleEnvironment = function() {
+        EnvChanger.toggle((result) => {
+            refresh_env(result);
+        }, true);
     };
 
     viewModel.togglePassword = function () {

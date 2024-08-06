@@ -737,13 +737,14 @@ angular.module('gastos.services', [])
 .service('QrScanner', function() {
     var self = this;
 
-    function delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
     self.scan = function (callback) {
         console.debug("QR Scanner not available, simulating delay...");
-        setTimeout(() => callback({text: '-empty-'}), 1000);
+        setTimeout(() => callback({text: '-empty-'}), 3000);
+    };
+
+    self.hideAndDestroy = function() {
+        // NOOP
+        console.debug("FORCED QR Scanner exit...");
     };
 
     document.addEventListener('deviceready', function() {
@@ -761,10 +762,10 @@ angular.module('gastos.services', [])
                         } else {
                             callback({text: result});
                         }
-                        QRScanner.destroy();
+                        self.hideAndDestroy();
                     });
 
-                    QRScanner.show();  // Moved this line here to ensure it only shows the camera when scanning
+                    QRScanner.show();
                 } else if (status.denied) {
                     alert("Acceso a la cámara denegado.");
                 } else {
@@ -772,7 +773,48 @@ angular.module('gastos.services', [])
                 }
             });
         };
+
+        self.hideAndDestroy = function() {
+            QRScanner.hide();
+            QRScanner.destroy();
+        };
+
     }, false);
+
+    return self;
+})
+
+.service('EnvChanger', function ($rootScope, $http, ApiEndPoint, ENV) {
+    const self = this;
+
+    const envMap = { testing: 'QA', production: 'P', dev: 'D' };
+    const envKeys = Object.keys(envMap);
+
+    self.fetchEnvironment = (callback, localOnly = false) => {
+        const result = {
+            current_env: envMap[ENV.env],
+            frontend_rev: 'fr:' + buildRevision.sha1.substring(0, 4)
+        };
+        if (!localOnly) {
+            return $http({url: ApiEndPoint.get() + 'configuracion/version'}).then((response) => {
+                result.backend_rev = 'br:' + response.data.version.substring(0, 4);
+                callback(result);
+            }, (rejection) => {
+                result.backend_rev = 'not available';
+                callback(result);
+            });
+        }
+        callback(result);
+    };
+
+    self.toggle = function(callback, localOnly = false) {
+        let envIndex = envKeys.indexOf(ENV.env);
+        envIndex = (envIndex + 1) % envKeys.length;
+        ENV.env = envKeys[envIndex];
+        ENV.set_env(ENV.env);
+        self.fetchEnvironment(callback, localOnly)
+        $rootScope.$broadcast('env_changed', {env: ENV.env});
+    };
 
     return self;
 })

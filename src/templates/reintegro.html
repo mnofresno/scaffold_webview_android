@@ -24,7 +24,10 @@
             <div class="col text-center">
                 <label for="comentarioReintegro" class="item item-input">
                     <span class="input-label"><strong>Comentario:</strong></span>
-                    <input style="font-size:25px; font-family: monospace;" id="comentarioReintegro" type="text" class="item text-right item-input" ng-model="viewModel.comentarioReintegro">
+                    <div class="input-group">
+                        <input id="comentarioReintegro" type="text" class="form-control" ng-model="viewModel.comentarioReintegro" />
+                        <i class="fa fa-pencil"></i>
+                    </div>
                 </label>
             </div>
         </div>
