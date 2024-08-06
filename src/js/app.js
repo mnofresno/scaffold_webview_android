@@ -43,11 +43,19 @@ app.config(function($stateProvider) {
     .state('app.home', {
         url: '/home',
         views: {
-        'menuContent': {
+        menuContent: {
           templateUrl: 'templates/home.html',
           controller: 'HomeCtrl'
         }
       }
+    })
+    .state('app.qrscanner', {
+        url: '/qrscanner',
+        views: {
+            menuContent: {
+                controller: 'QrScannerCtrl'
+            }
+        }
     })
     .state('app.posicion', {
         url: '/posicion',
@@ -56,16 +64,16 @@ app.config(function($stateProvider) {
             show_offline_link: false
         },
         views: {
-        'menuContent': {
-          templateUrl: 'templates/posicion.html',
-          controller: 'PosicionCtrl'
-        }
+            menuContent: {
+                templateUrl: 'templates/posicion.html',
+                controller: 'PosicionCtrl'
+            }
       }
     })
     .state('app.listadoGastos', {
       url: '/listado',
       views: {
-        'menuContent': {
+        menuContent: {
           templateUrl: 'templates/movimientos.html',
           controller: 'ListadoGastosCtrl'
         }
@@ -74,7 +82,7 @@ app.config(function($stateProvider) {
     .state('app.gastosMensuales', {
       url: '/mensuales',
       views: {
-        'menuContent': {
+        menuContent: {
           templateUrl: 'templates/mensuales.html',
           controller: 'GastosMensualesCtrl'
         }
@@ -83,7 +91,7 @@ app.config(function($stateProvider) {
     .state('app.Configuracion', {
       url: '/configuracion',
       views: {
-        'menuContent': {
+        menuContent: {
           templateUrl: 'templates/configuracion.html',
           controller: 'ConfiguracionCtrl'
         }
@@ -92,7 +100,7 @@ app.config(function($stateProvider) {
     .state('app.realizarReintegro', {
         url: '/reintegrar',
         views: {
-        'menuContent': {
+        menuContent: {
           templateUrl: 'templates/reintegro.html',
           controller: 'ReintegroCtrl'
         }
@@ -102,7 +110,7 @@ app.config(function($stateProvider) {
       url: '/offline',
       cache: false,
       views: {
-        'menuContent': {
+        menuContent: {
           templateUrl: 'templates/offline.html',
           controller: 'OfflineCtrl'
         }
@@ -112,7 +120,7 @@ app.config(function($stateProvider) {
       url: '/porCategoria',
       cache: false,
       views: {
-        'menuContent': {
+        menuContent: {
           templateUrl: 'templates/porCategoria.html',
           controller: 'PorCategoriasCtrl'
         }

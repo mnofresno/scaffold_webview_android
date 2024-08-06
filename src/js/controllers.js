@@ -13,23 +13,17 @@ angular.module('gastos.controllers', [])
     $rootScope,
     NotificacionesService,
     QrScanner,
-    $http,
-    ApiEndPoint,
-    $localStorage,
-    EnvChanger,
-    ENV
+    EnvChanger
 ) {
-    var viewModel = $scope.viewModel = {isMenuOpen: false, showApp: true, isTransitioning: false};
+    var viewModel = $scope.viewModel = {
+        isMenuOpen: false,
+        isTransitioning: false,
+        showApp: () => !QrScanner.isScanning
+    };
     function initialize() {
-        const onExitQrCamera = () => {
-            QrScanner.hideAndDestroy();
-            viewModel.showApp = true;
-            document.removeEventListener('backbutton', onExitQrCamera, false);
-        };
 
         viewModel.navigate = function(state) {
             if (!viewModel.isTransitioning) {
-                onExitQrCamera();
                 viewModel.isMenuOpen = false;
                 viewModel.isTransitioning = true;
                 $state.go(state).finally(function() {
@@ -107,30 +101,6 @@ angular.module('gastos.controllers', [])
 
         $rootScope.refreshSaldo = viewModel.getSaldo;
         $rootScope.$on('env_changed', () => viewModel.sincronizarTodo());
-        viewModel.scanQrCode = function() {
-            viewModel.isMenuOpen = false;
-            viewModel.showApp = false;
-            document.addEventListener('backbutton', onExitQrCamera, false);
-
-            QrScanner.scan(function(scanResult) {
-                viewModel.showApp = true;
-                var code = scanResult.text;
-                var loginData = { qrcode: code };
-                var callback = function(response) {
-                    var data = response.data;
-                    console.debug(data);
-                };
-
-                $http({
-                    url: ApiEndPoint.get() + 'usuario/qrcodelogin',
-                    method: 'POST',
-                    data: loginData
-                }).then(callback)
-                .finally(() => {
-                    document.removeEventListener('backbutton', onExitQrCamera, false);
-                });
-            });
-        };
 
         NotificacionesService.setNotificationCallback(function(data) {
             if (data === 'update_saldo') $scope.$applyAsync(viewModel.getSaldo);
@@ -139,6 +109,44 @@ angular.module('gastos.controllers', [])
         EnvChanger.fetchEnvironment(refresh_env);
         viewModel.getSaldo();
     }
+
+    if (window.cordova) {
+        document.addEventListener('deviceready', initialize, false);
+    } else {
+        angular.element(document).ready(initialize);
+    }
+})
+
+.controller('QrScannerCtrl', function (QrScanner, $state, ApiEndPoint, $http) {
+    console.debug('start qr');
+    const onExitQrCamera = () => {
+        QrScanner.hideAndDestroy();
+        document.removeEventListener('backbutton', onExitQrCamera, false);
+    };
+
+    const initialize = function() {
+        document.addEventListener('backbutton', onExitQrCamera, false);
+
+        QrScanner.scan(function(scanResult) {
+            var code = scanResult.text;
+            var loginData = { qrcode: code };
+            var callback = function(response) {
+                var data = response.data;
+                console.debug(data);
+                $state.go('app.home');
+            };
+
+            $http({
+                url: ApiEndPoint.get() + 'usuario/qrcodelogin',
+                method: 'POST',
+                data: loginData
+            }).then(callback)
+            .finally(() => {
+                document.removeEventListener('backbutton', onExitQrCamera, false);
+                $state.go('app.home');
+            });
+        });
+    };
 
     if (window.cordova) {
         document.addEventListener('deviceready', initialize, false);

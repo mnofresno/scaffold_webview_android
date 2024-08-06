@@ -6,14 +6,17 @@
         <li class="menu-item" ng-click="viewModel.navigate('app.home')">
             <i class="icon ion-cash"></i> Registrar gasto
         </li>
+        <li class="menu-item" ng-click="viewModel.navigate('app.realizarReintegro')">
+            <i class="icon ion-paper-airplane"></i> Realizar reintegro
+        </li>
         <li class="menu-item" ng-click="viewModel.navigate('app.listadoGastos')">
-            <i class="icon ion-ios-list-outline"></i> Listado de movimientos
+            <i class="icon ion-ios-list-outline"></i> Movimientos
         </li>
         <li class="menu-item" ng-click="viewModel.navigate('app.posicion')">
             <i class="icon ion-speedometer"></i> Mostrar posición
         </li>
-        <li class="menu-item" ng-click="viewModel.navigate('app.Configuracion')">
-            <i class="icon ion-settings"></i> Configuración
+        <li class="menu-item" ng-click="viewModel.navigate('app.qrscanner')">
+            <i class="icon ion-qr-scanner"></i> Leer código QR
         </li>
         <li class="menu-item" ng-click="viewModel.navigate('app.gastosMensuales')">
             <i class="icon ion-calendar"></i> Gastos por mes
@@ -21,8 +24,8 @@
         <li class="menu-item" ng-click="viewModel.navigate('app.gastosPorCategoria')">
             <i class="icon ion-flag"></i> Gastos por categoría
         </li>
-        <li class="menu-item" ng-click="viewModel.navigate('app.realizarReintegro')">
-            <i class="icon ion-paper-airplane"></i> Realizar reintegro
+        <li class="menu-item" ng-click="viewModel.navigate('app.Configuracion')">
+            <i class="icon ion-settings"></i> Configuración
         </li>
         <li class="menu-item" ng-click="viewModel.sincronizarTodo()">
             <i class="icon ion-loop"></i> Sincronizar todo
@@ -36,9 +39,6 @@
         <!-- <li class="menu-item" ng-click="viewModel.VerMensajesNoLeidos()">
             <i class="icon ion-email"></i> Mensajes no leídos
         </li> -->
-        <li class="menu-item" ng-click="viewModel.scanQrCode()">
-            <i class="icon ion-qr-scanner"></i> Leer código QR
-        </li>
         <li class="menu-item" ng-click="viewModel.cerrarSesion()">
             <i class="ion-android-exit"></i> Cerrar sesión
         </li>
@@ -57,5 +57,5 @@
             <strong>{{ viewModel.saldo }}</strong> <i class="ion-loop"></i>
         </button>
     </div>
-    <div ui-view="menuContent" style="overflow-y: scroll;height: 80vh;" ng-if="viewModel.showApp"></div>
+    <div ui-view="menuContent" style="overflow-y: scroll;height: 80vh;" ng-if="viewModel.showApp()"></div>
 </div>

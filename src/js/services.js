@@ -736,10 +736,15 @@ angular.module('gastos.services', [])
 
 .service('QrScanner', function() {
     var self = this;
+    self.isScanning = false;
 
     self.scan = function (callback) {
+        self.isScanning = true;
         console.debug("QR Scanner not available, simulating delay...");
-        setTimeout(() => callback({text: '-empty-'}), 3000);
+        setTimeout(() => {
+            callback({text: '-empty-'});
+            self.isScanning = false;
+        }, 3000);
     };
 
     self.hideAndDestroy = function() {
@@ -749,9 +754,12 @@ angular.module('gastos.services', [])
 
     document.addEventListener('deviceready', function() {
         self.scan = function(callback) {
+            self.isScanning = true;
+
             QRScanner.prepare(function(err, status) {
                 if (err) {
                     alert("Preparación del escáner falló: " + err);
+                    self.isScanning = false;
                     return;
                 }
 
@@ -763,9 +771,11 @@ angular.module('gastos.services', [])
                             callback({text: result});
                         }
                         self.hideAndDestroy();
+                        self.isScanning = false;
                     });
 
                     QRScanner.show();
+                    self.isScanning = true;
                 } else if (status.denied) {
                     alert("Acceso a la cámara denegado.");
                 } else {
@@ -777,6 +787,7 @@ angular.module('gastos.services', [])
         self.hideAndDestroy = function() {
             QRScanner.hide();
             QRScanner.destroy();
+            self.isScanning = false;
         };
 
     }, false);
