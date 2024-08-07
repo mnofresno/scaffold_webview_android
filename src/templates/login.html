@@ -1,0 +1,42 @@
+<!-- templates/login.html -->
+<div class="header">
+    <h3>Control Gastos Hogar</h3>
+</div>
+
+<div class="content">
+    <form ng-submit="viewModel.login(viewModel.errorLogin)">
+        <div class="row">
+            <div class="col">
+                <div class="list" ng-if="viewModel.mostrarFormulario()">
+                <label class="item item-input">
+                    <span class="input-label">Usuario/E-mail:</span>
+                    <input id="username" type="text" ng-model="viewModel.usuario.nombre" autocomplete="username"/>
+                </label>
+                <label class="item item-input password-container">
+                    <span class="input-label">Clave:</span>
+                    <input type="password" id="password" ng-model="viewModel.usuario.clave" autocomplete="current-password"/>
+                    <span class="toggle-password" ng-click="viewModel.togglePassword()">
+                        <i class="fa fa-eye" id="toggleEye"></i>
+                    </span>
+                </label>
+                </div>
+                <div class="list" ng-if="!viewModel.mostrarFormulario()">
+                    <span class="error-message"><strong>ERROR AL INICIAR SESION</strong></span>
+                </div>
+                <button class="button" type="submit" ng-disabled="!viewModel.habilitarLogin()">Aceptar</button>
+            </div>
+        </div>
+        <div class="row" ng-click="viewModel.toggleShowEnvToggler()">
+            <div class="col text-center">
+               <div class="item-content">
+                  <i class="ion" ng-class="viewModel.envTogglerIsCollapsed ? 'ion-chevron-up' : 'ion-chevron-down'"></i>
+               </div>
+            </div>
+        </div>
+        <div class="row" ng-show="!viewModel.envTogglerIsCollapsed">
+            <div class="col">
+                <button class="button" type="button" ng-click="viewModel.toggleEnvironment()"><span style="font-size: small;">Current ENV <span style="font-size: xx-small;">({{ viewModel.frontend_rev }})</span>: <b>{{ viewModel.current_env }}</b></span></button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,73 @@
+<div cache-view="false" view-title="Listado de movimientos">
+    <div class="ion-content" padding="true" class="has-header">
+        <ion-refresher
+            pulling-text="Tirar hacia abajo para actualizar..."
+            on-refresh="viewModel.actualizarMovimientos()">
+        </ion-refresher>
+
+        <div class="row">
+            <div class="col text-center">
+                <select id="categoriaSelect"
+                    ng-change="viewModel.cambioCategoria()"
+                    ng-model="viewModel.selectedCategorias"
+                    ng-options="cat.id as cat.titulo for cat in viewModel.availableCategorias"
+                    class="custom-select">
+                    <option value ="">--Categoria--</option>
+                </select>
+            </div>
+            <div class="col text-center">
+                <select class="custom-select" ng-model="viewModel.mesSeleccionado"
+                    ng-change="viewModel.enableFilters && viewModel.cambioFiltro()"
+                    ng-options="mes as mes.titulo for mes in viewModel.mesesPosibles track by mes.mes">
+                    <option value ="">--Mes de compra--</option>
+                </select>
+            </div>
+            <div class="col text-center">
+                <select class="custom-select" ng-model="viewModel.tipoMovimientoSeleccionado"
+                    ng-change="viewModel.enableFilters && viewModel.cambioFiltro()"
+                    ng-options="tipo as tipo.titulo for tipo in viewModel.tiposMovimientosPosibles track by tipo.id">
+                    <option value ="">--Tipo--</option>
+                </select>
+            </div>
+        </div>
+        <div class="row" ng-if="viewModel.total !== undefined && viewModel.total !== null">
+            <div class="col lista-movimientos">
+                <div class="card responsive-sm" ng-repeat="item in viewModel.Movimientos.items track by item.id" ng-click="viewModel.getDetalleMovimiento(item)">
+                    <div class="item item-divider card-header" >
+                        <div class="row">
+                            <div class="col col-50 text-left">
+                                <i ng-show="item.icono" ng-class="item.icono"></i>{{ (item.icono ? " " : "") + item.categoria}}
+                                <i ng-show="item.tarjeta_credito" class="ion-card"></i>
+                            </div>
+                            <div class="col col-50 text-right">
+                              <span class="card-header-fechas">
+                                {{ item.created_at |date:'dd/MM/yyyy'    }}
+                                <span ng-if="item.fecha_pago !== item.created_at"> (P: {{ item.fecha_pago |date:'dd/MM/yyyy'  }})</span>
+                              </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item item-text-wrap card-body">
+                        <div class="row">
+                            <div class="col col-90 text-center">
+                              <strong>$</strong> {{ item.importe  }}
+                              </br>
+                              <strong>U:</strong> {{ item.usuario  }}
+                            </div>
+                            <div class="col col-10 text-right">
+                                <i class="icon ion-chevron-right icon-accessory"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row footer-container">
+            <div class="col">
+                <div class="item">
+                    <span>Total: ${{viewModel.total}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

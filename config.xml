@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="ar.fresno.gastos" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Control Gastos</name>
+    <description>App de control de gastos del hogar</description>
+    <author email="mnofresno@gmail.com" href="https://mariano.fresno.ar">
+        Mariano M. Fresno
+    </author>
+    <content src="index.html" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <plugin name="cordova-plugin-qrscanner-androidx" spec="https://github.com/i-mediasolutions/cordova-plugin-qrscanner-androidx" />
+    <platform name="android">
+        <preference name="AndroidXEnabled" value="true" />
+        <preference name="GradlePluginKotlinEnabled" value="true" />
+        <preference name="GradleUse" value="gradlew" />
+        <preference name="GradlePath" value="/app/gradlew" />
+        <preference name="GradlePluginGoogleServicesVersion" value="4.3.15" />
+        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="resources/android/splash/splash-xxxhdpi.png" />
+
+        <!-- Splash screens -->
+        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="resources/android/splash/splash-xxxhdpi.png" />
+
+        <!-- App icons -->
+        <icon src="resources/android/icon/drawable-mdpi-icon.png" density="mdpi"/>
+        <icon src="resources/android/icon/drawable-hdpi-icon.png" density="hdpi"/>
+        <icon src="resources/android/icon/drawable-xhdpi-icon.png" density="xhdpi"/>
+        <icon src="resources/android/icon/drawable-xxhdpi-icon.png" density="xxhdpi"/>
+        <icon src="resources/android/icon/drawable-xxxhdpi-icon.png" density="xxxhdpi"/>
+
+        <resource-file src="google-services.json" target="google-services.json" />
+    </platform>
+</widget>

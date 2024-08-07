@@ -1,0 +1,49 @@
+<div class="modal-container">
+    <div class="modal-header">
+      <h5 class="title">Detalle del movimiento</h5>
+      <div class="buttons">
+        <button class="button button-clear" ng-click="ventana.remove()">Cerrar</button>
+      </div>
+    </div>
+    <div class="modal-content">
+      <div>
+        <span>
+          <div class="center-element">
+            <table width="100%">
+              <tr><td>Fecha Compra</td><td> <strong> {{ detalle.created_at | amDateFormat:'DD/MM/YYYY HH:mm:ss' }} </strong></td></tr>
+              <tr><td>Fecha Pago</td><td> <strong> {{ detalle.fecha_pago | amDateFormat:'DD/MM/YYYY HH:mm:ss' }} </strong></td></tr>
+              <tr><td>Importe</td><td> <strong> $ {{ detalle.importe }} </strong></td></tr>
+              <tr><td>Usuario</td><td> <strong> {{ detalle.user.name }} </strong></td></tr>
+              <tr ng-if="movLista.tipo == 'G'"><td>Categoria</td><td> <strong> {{ detalle.categoria.titulo }} </strong></td></tr>
+              <tr><td>Tipo</td><td> <strong> {{ detalle.tipo_movimiento }} <i ng-if="detalle.tarjeta_credito" class="ion-card"></i></strong></td></tr>
+              <tr><td>Comentario</td><td> <strong> <pre>{{ detalle.descripcion.length > 0 ? detalle.descripcion : '-No se registró comentario-' }}</pre> </strong></td></tr>
+              <tr ng-if="movLista.tipo == 'R'"><td>Destinatario</td><td> <strong> {{ detalle.destinatario.name }} </strong></td></tr>
+            </table>
+          </div>
+        </span>
+      </div>
+      <div class="cuotas card responsive-sm" ng-if="detalle.tarjeta_credito && detalle.pago.cuotas.length > 0">
+        <div class="item item-divider card-header">
+          <span>Cuotas de la compra, Total: $ {{ detalle.pago.total }}</span>
+        </div>
+        <div class="item item-text-wrap card-body">
+          <table width="100%">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Fecha Pago</th>
+                <th>Importe</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="cuota in detalle.pago.cuotas track by cuota.id">
+                <td>#{{ $index+1 }}</td>
+                <td>{{ cuota.fecha_pago | date:'dd/MM/yyyy' }}</td>
+                <td>{{ cuota.importe }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,61 @@
+<div class="menu-container" ng-class="{ 'menu-open': viewModel.isMenuOpen }">
+    <div class="menu-header">
+        <h4>Menú</h4>
+    </div>
+    <ul class="menu-list">
+        <li class="menu-item" ng-click="viewModel.navigate('app.home')">
+            <i class="icon ion-cash"></i> Registrar gasto
+        </li>
+        <li class="menu-item" ng-click="viewModel.navigate('app.realizarReintegro')">
+            <i class="icon ion-paper-airplane"></i> Realizar reintegro
+        </li>
+        <li class="menu-item" ng-click="viewModel.navigate('app.listadoGastos')">
+            <i class="icon ion-ios-list-outline"></i> Movimientos
+        </li>
+        <li class="menu-item" ng-click="viewModel.navigate('app.posicion')">
+            <i class="icon ion-speedometer"></i> Mostrar posición
+        </li>
+        <li class="menu-item" ng-click="viewModel.navigate('app.qrscanner')">
+            <i class="icon ion-qr-scanner"></i> Leer código QR
+        </li>
+        <li class="menu-item" ng-click="viewModel.navigate('app.gastosMensuales')">
+            <i class="icon ion-calendar"></i> Gastos por mes
+        </li>
+        <li class="menu-item" ng-click="viewModel.navigate('app.gastosPorCategoria')">
+            <i class="icon ion-flag"></i> Gastos por categoría
+        </li>
+        <li class="menu-item" ng-click="viewModel.navigate('app.Configuracion')">
+            <i class="icon ion-settings"></i> Configuración
+        </li>
+        <li class="menu-item" ng-click="viewModel.sincronizarTodo()">
+            <i class="icon ion-loop"></i> Sincronizar todo
+        </li>
+        <li class="menu-item" ng-click="viewModel.navigate('app.offline')">
+            <i class="icon ion-android-globe"></i> Gastos offline {{viewModel.movimientosPendientes()}}
+        </li>
+        <!-- <li class="menu-item" ng-click="viewModel.solicitarResumen()">
+            <i class="icon ion-email"></i> Solicitar Resumen
+        </li> -->
+        <!-- <li class="menu-item" ng-click="viewModel.VerMensajesNoLeidos()">
+            <i class="icon ion-email"></i> Mensajes no leídos
+        </li> -->
+        <li class="menu-item" ng-click="viewModel.cerrarSesion()">
+            <i class="ion-android-exit"></i> Cerrar sesión
+        </li>
+    </ul>
+</div>
+
+<div class="content-container" ng-class="{ 'menu-open': viewModel.isMenuOpen }">
+    <div class="nav-bar">
+        <button class="menu-toggle" ng-click="viewModel.toggleMenu($event)" type="button">
+            <i class="icon ion-navicon" style="font-size: 18px;"></i> <strong>Control Gastos</strong>
+        </button>
+        <button  class="saldo-button" ng-click="viewModel.toggleEnvironment()">
+            <span style="font-size: small;"><b>{{ viewModel.env }}</b></span><span style="font-size: xx-small;"><br/>{{ viewModel.frontend_rev }} / {{ viewModel.backend_rev }}</span>
+        </button>
+        <button ng-click="viewModel.getSaldo()" class="saldo-button">
+            <strong>{{ viewModel.saldo }}</strong> <i class="ion-loop"></i>
+        </button>
+    </div>
+    <div ui-view="menuContent" style="overflow-y: scroll;height: 80vh;" ng-if="viewModel.showApp()"></div>
+</div>

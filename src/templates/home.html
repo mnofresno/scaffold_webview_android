@@ -1,0 +1,118 @@
+<div class="ion-view" cache-view="false" view-title="">
+    <div class="ion-content" padding="true" class="has-header col-xs-12">
+       <div class="row">
+          <div class="col">
+            <label for="importeGasto" class="item item-input">
+                <span class="input-label"><strong>Importe:</strong></span>
+                <div class="input-group" style="display: flex; align-items: center;">
+                    <i class="fa fa-dollar" style="font-size:25px; margin-right: 5px;"></i>
+                    <input
+                        style="font-size:25px; font-family: monospace; flex: 1;"
+                        id="importeGasto"
+                        type="number"
+                        class="item text-right item-input"
+                        ng-model="viewModel.importeGasto"
+                        step="any"
+                    />
+                </div>
+            </label>
+          </div>
+       </div>
+       <div class="row">
+            <div class="col">
+                <label for="comentarioGasto" class="item item-input">
+                    <span class="input-label"><strong>Comentario:</strong></span>
+                    <div class="input-group">
+                        <input id="comentarioGasto" type="text" class="form-control" ng-model="viewModel.comentarioGasto" />
+                        <i ng-click="viewModel.goToEndOfComment()" class="fa fa-pencil"></i>
+                    </div>
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label>
+                    <input type="checkbox" ng-model="viewModel.tarjeta_credito" ng-true-value="true" ng-false-value="false">
+                    Tarjeta de crédito
+                </label>
+            </div>
+        </div>
+        <div class="row" ng-if="viewModel.tarjeta_credito">
+          <div class="col">
+             <label for="cuotasTarjeta" class="item item-input"><span class="input-label"><strong>Cuotas:</strong></span>
+             <input style="font-size:25px; font-family: monospace;" id="cuotasTarjeta" type="number" class = "item text-right item-input" ng-model="viewModel.cuotasTarjeta" step="any"></label>
+          </div>
+       </div>
+       <div class="row">
+          <div class="col text-center">
+             <div class="row" ng-repeat="fila in viewModel.categorias | chunk: 2">
+                <div class="col col-50 text-center" style="margin: -3px;" ng-repeat="categoria in fila track by categoria.id">
+                   <label class="item item-radio ng-valid">
+                      <input type="radio" name="radio-group" ng-value="categoria" ng-model="viewModel.categoriaSeleccionada" class="ng-untouched ng-valid ng-dirty ng-valid-parse">
+                      <div class="radio-content">
+                         <div style="margin-left: -5px;" class="item-content disable-pointer-events">
+                            <span style="margin-left: -5px;font-size: 8pt;" class="ng-binding"><i ng-class="categoria.icono" class="text-left"></i>&nbsp;{{ categoria.titulo }}</span>
+                         </div>
+                         <i style="margin-left: -10px;" class="radio-icon disable-pointer-events icon ion-checkmark"></i>
+                      </div>
+                   </label>
+                </div>
+             </div>
+          </div>
+       </div>
+       <div class="row" ng-show="viewModel.hasFilteredCategories()" ng-click="viewModel.toggleShowAllCategories()">
+          <div class="col text-center">
+             <div class="item-content">
+                <i class="ion" ng-class="!viewModel.noFiltrarCategorias ? 'ion-chevron-down' : 'ion-chevron-up'"></i>
+             </div>
+          </div>
+       </div>
+       <div class="row" ng-click="viewModel.external_payments.toggle()">
+          <div class="col text-center">
+             <div class="item-content">
+                <i id="toggle-icon" class="ion ion-android-download icon-button" ng-class="viewModel.external_payments.enabled ? 'toggled' : ''"></i>
+             </div>
+          </div>
+       </div>
+       <div class="row" ng-show="viewModel.external_payments.enabled">
+          <div class="col text-center">
+             <div class="card responsive-sm" ng-repeat="payment in viewModel.external_payments.list track by payment.id">
+                <div class="item item-divider card-header" >
+                   <div class="row">
+                      <div class="col col-50 text-left">
+                         $ {{ payment.importe}}</td>
+                      </div>
+                      <div class="col col-50 text-right">
+                        {{ payment.fecha_creacion|date:'dd/MM/yyyy'}}</td>
+                     </div>
+                   </div>
+                </div>
+                <div class="item item-text-wrap card-body">
+                   <div class="row">
+                      <div class="col col-90 text-center">
+                         {{ payment.descripcion  }}
+                      </div>
+                      <div class="col col-10 text-right" ng-click="viewModel.external_payments.copy(payment)">
+                         <i ng-class="payment.selected ? 'ion-checkmark' : 'ion-android-download'" class="ion"></i>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </div>
+       </div>
+       </p>
+       <div ng-if="viewModel.mostrarCartel()" >
+          <div class="center-element"><span>Se va a registar {{viewModel.importeGasto}} en {{viewModel.categoriaSeleccionada.titulo}} a nombre de {{viewModel.usuario.nombre}}</span></div>
+       </div>
+       <div class="row footer-container">
+            <div class="col">
+                <button ng-disabled="!viewModel.isValid()" ng-click="viewModel.registrarGasto()" class="button button-block button-positive">Registrar gasto</button>
+            </div>
+            <div class="col">
+                <button ng-click="viewModel.limpiarFormulario()" class="button button-block button-positive">Limpiar</button>
+            </div>
+        </div>
+       </div>
+    </div>
+ </div>

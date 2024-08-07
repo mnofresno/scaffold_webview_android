@@ -1,0 +1,36 @@
+<div class="ion-view" cache-view="false" view-title="Gastos por Categoria">
+    <div class="ion-content" padding="true" class="has-header">
+        <div class="item container">
+            <div class="row text-center">
+                <div class="col col-33">
+                    <button class="button button-balanced" ng-click="anterior()"><i class="ion-chevron-left"></i></button>
+                </div>
+                <div class="col col-33">
+                    <button class="button button-balanced" ng-click="update()">Actualizar</button>
+                </div>
+                <div class="col col-33">
+                    <button ng-disabled="mesActual === 0" class="button button-balanced" ng-click="siguiente()"><i class="ion-chevron-right"></i></button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center" ng-repeat="mes in listado.data">
+                    <div class="row">
+                        <div class="col">
+                            <strong>{{ mes.mes }}</strong>
+                        </div>
+                    </div>
+                    <div class="row" ng-repeat="gasto in mes.gastos">
+                        <div class="col col-50 text-left">
+                            <strong>{{ gasto.categoria }}</strong>
+                        </div>
+                        <div class="col col-50 text-right">
+                            $ {{ gasto.importe }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
