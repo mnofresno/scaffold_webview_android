@@ -454,6 +454,14 @@ angular.module('gastos.controllers', [])
         $http({url: ApiEndPoint.get() + 'integraciones/mercadopago/last_payments'}).then(callback_to_update);
     };
 
+    viewModel.goToEndOfComment = () => {
+        var inputElement = document.getElementById('comentarioGasto');
+        if (inputElement) {
+            inputElement.focus();
+            inputElement.setSelectionRange(inputElement.value.length, inputElement.value.length);
+        }
+    };
+
     viewModel.external_payments.copy = function (payment) {
         let previous = viewModel.external_payments.list.find(x => x.selected);
         if (previous) {
