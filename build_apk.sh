@@ -1,12 +1,15 @@
 #!/bin/bash
 
+set -eu
+
 cd "$(dirname "$0")"
 
-IMAGE_NAME="ghcr.io/mnofresno/cordova-build-yarn-webpack:3.0.0"
+IMAGE_NAME="ghcr.io/mnofresno/cordova-build-yarn-webpack:3.0.1"
 CONTAINER_NAME="android-build"
 WORKING_DIR="/app"
 APK_PATH="platforms/android/app/build/outputs/apk/debug/app-debug.apk"
 APK_PATH_INSIDE_CONTAINER="/app/$APK_PATH"
+
 ./auto-update/create_revision.sh
 
 run_docker_command() {
@@ -18,7 +21,7 @@ docker run -d --name $CONTAINER_NAME \
     -e ANDROID_HOME=/usr/local/android-sdk \
     --network host \
     -e BUILD_TOOLS_VERSION="34.0.0" \
-    $IMAGE_NAME tail -f /dev/null
+    $IMAGE_NAME tail -f /dev/null || true
 
 PACKAGE_NAME=$(run_docker_command /app/get_package_name.sh "$APK_PATH_INSIDE_CONTAINER" | tr -d '\r')
 MAIN_ACTIVITY="$PACKAGE_NAME/.MainActivity"
@@ -29,12 +32,17 @@ run_docker_command yarn build
 if [ -f "$APK_PATH" ]; then
   run_docker_command rm "$APK_PATH_INSIDE_CONTAINER"
 fi
-run_docker_command cordova prepare
-run_docker_command cordova platform add android
-
+if ! run_docker_command cordova prepare; then
+  echo "Warning: 'cordova prepare' command failed but continuing the script."
+fi
+if ! run_docker_command cordova platform add android; then
+  echo "Warning: 'cordova platform add android' command failed but continuing the script."
+fi
 run_docker_command cp google-services.json platforms/android/app/
 
 run_docker_command cordova build android
+
+DEPLOY=false
 
 while [[ "$#" -gt 0 ]]; do
   case $1 in

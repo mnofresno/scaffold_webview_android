@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="ar.fresno.gastos" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="ar.fresno.gastos" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
     <name>Control Gastos</name>
     <description>App de control de gastos del hogar</description>
     <author email="mnofresno@gmail.com" href="https://mariano.fresno.ar">
@@ -27,6 +27,13 @@
         <icon src="resources/android/icon/drawable-xxhdpi-icon.png" density="xxhdpi"/>
         <icon src="resources/android/icon/drawable-xxxhdpi-icon.png" density="xxxhdpi"/>
 
-        <resource-file src="google-services.json" target="google-services.json" />
+        <resource-file src="google-services.json" target="app/google-services.json" />
+
+        <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/uses-permission" xmlns:android="http://schemas.android.com/apk/res/android">
+            <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.WAKE_LOCK" />
+            <uses-permission android:name="android.permission.VIBRATE" />
+        </edit-config>
     </platform>
 </widget>

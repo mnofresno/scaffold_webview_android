@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IMAGE_NAME="ghcr.io/mnofresno/cordova-build-yarn-webpack:3.0.0"
+IMAGE_NAME="ghcr.io/mnofresno/cordova-build-yarn-webpack:3.0.1"
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in

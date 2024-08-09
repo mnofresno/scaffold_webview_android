@@ -71,7 +71,8 @@ module.exports = (env, argv) => {
             }),
             new CopyWebpackPlugin({
                 patterns: [
-                    { from: 'src/templates', to: 'templates' }
+                    { from: 'src/templates', to: 'templates' },
+                    { from: 'src/service-worker.js', to: 'service-worker.js' }
                 ],
             }),
         ],

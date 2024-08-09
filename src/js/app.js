@@ -129,6 +129,51 @@ app.config(function($stateProvider) {
 
 });
 
+app.run(function() {
+    const firebaseConfig = {messgae:'test-message'};
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(function(registration) {
+          console.log('Service Worker registered with scope:', registration.scope);
+
+          if (registration.active) {
+            registration.active.postMessage({
+              type: 'INIT',
+              config: firebaseConfig
+            });
+          } else if (registration.waiting) {
+            registration.waiting.postMessage({
+              type: 'INIT',
+              config: firebaseConfig
+            });
+          } else if (registration.installing) {
+            registration.installing.addEventListener('statechange', function(event) {
+              if (event.target.state === 'activated') {
+                event.target.postMessage({
+                  type: 'INIT',
+                  config: firebaseConfig
+                });
+              }
+            });
+          }
+
+        })
+        .catch(function(err) {
+          console.error('Service Worker registration failed:', err);
+        });
+    }
+});
+
+app.run(function() {
+  if (navigator.serviceWorker) {
+    navigator.serviceWorker.addEventListener('message', function(event) {
+      console.log('Received a message from service worker: ', event.data);
+      localStorage.setItem('firebaseMessage', JSON.stringify(event.data));
+    });
+  }
+});
+
 app.run(function(
     $state,
     $rootScope,

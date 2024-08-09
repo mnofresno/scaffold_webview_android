@@ -5,3 +5,5 @@ RUN yarn global add npm@10.8.1
 RUN yarn global add cordova@12.0.0
 
 ENV PATH /app:/usr/local/bin:$PATH
+
+RUN apk add openssh
