@@ -27,6 +27,6 @@
         <icon src="resources/android/icon/drawable-xxhdpi-icon.png" density="xxhdpi"/>
         <icon src="resources/android/icon/drawable-xxxhdpi-icon.png" density="xxxhdpi"/>
 
-        <resource-file src="google-services.json" target="google-services.json" />
+        <resource-file src="google-services.json" target="app/google-services.json" />
     </platform>
 </widget>

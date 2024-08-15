@@ -422,7 +422,7 @@ angular.module('gastos.controllers', [])
     }
 
     var viewModel = $scope.viewModel = {
-        external_payments: {enabled: false, list: []},
+        external_payments: {enabled: false, list: [], is_cached: true, last_refresh: ''},
         tarjeta_credito:        false,
         cuotasTarjeta:          1,
         noFiltrarCategorias:    false,
@@ -450,15 +450,20 @@ angular.module('gastos.controllers', [])
         }, viewModel.noFiltrarCategorias);
     };
 
-    const updateExternalPayments = (callback_to_update) => {
-        $http({url: ApiEndPoint.get() + 'integraciones/mercadopago/last_payments'}).then(callback_to_update);
+    const updateExternalPayments = (callback_to_update, force_refresh = false) => {
+        const forced_refresh_param = force_refresh ? "?force_refresh=true" : '';
+        $http({url: ApiEndPoint.get() + `integraciones/mercadopago/last_payments${forced_refresh_param}`}).then(callback_to_update);
     };
 
-    viewModel.goToEndOfComment = () => {
+    viewModel.goToEndOfComment = function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+
         var inputElement = document.getElementById('comentarioGasto');
         if (inputElement) {
             inputElement.focus();
             inputElement.setSelectionRange(inputElement.value.length, inputElement.value.length);
+            inputElement.scrollLeft = inputElement.scrollWidth;
         }
     };
 
@@ -477,13 +482,20 @@ angular.module('gastos.controllers', [])
         ].join(" ");
     };
 
+    const refreshExternalPaymentsCallback = (response) => {
+        viewModel.external_payments.list = response.data.payments;
+        viewModel.external_payments.is_cached = response.data.is_cached;
+        viewModel.external_payments.last_refresh = response.data.last_refresh.date
+    };
+
+    viewModel.external_payments.force_refresh = function () {
+        updateExternalPayments(refreshExternalPaymentsCallback, true);
+    };
+
     viewModel.external_payments.toggle = function () {
         viewModel.external_payments.enabled = !viewModel.external_payments.enabled;
         if (viewModel.external_payments.enabled) {
-            console.debug("DESCARGANDO..");
-            updateExternalPayments((response) => {
-                viewModel.external_payments.list = response.data.payments;
-            });
+            updateExternalPayments(refreshExternalPaymentsCallback);
         }
     };
 

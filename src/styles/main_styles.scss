@@ -242,3 +242,9 @@ body {
     align-items: center;
     justify-content: center;
 }
+.menu-separator {
+    height: 1px;
+    background-color: #3498db; /* Color del separador */
+    margin: 10px 0;         /* Espacio alrededor del separador */
+    list-style-type: none;  /* Eliminar el estilo del elemento de lista */
+}
