@@ -625,8 +625,7 @@ angular.module('gastos.services', [])
     return self;
 })
 
-.service('NotificacionesService' , function($localStorage, Auth, MensajesService)
-{
+.service('NotificacionesService', function($localStorage, Auth, MensajesService) {
     var self = this;
 
     var notificationCallback = null;
@@ -642,66 +641,64 @@ angular.module('gastos.services', [])
     };
 
     self.getToken = function() {
-        cordova.plugins.firebase.messaging.getToken().then(function(token) {
+        FirebasePlugin.getToken(function(token) {
             console.log("Firebase token: " + token);
             if(!$localStorage.has('fcm_token_stored')) {
                 self.saveToken(token);
             }
+        }, function(error) {
+            console.error("Error getting token: ", error);
         });
     };
 
     self.installTokenRefresher = function() {
-        cordova.plugins.firebase.messaging.onTokenRefresh(function(token) {
+        FirebasePlugin.onTokenRefresh(function(token) {
             $localStorage.delete('fcm_token_stored');
             console.log("Firebase token refreshed: " + token);
             self.saveToken(token);
+        }, function(error) {
+            console.error("Error on token refresh: ", error);
         });
     };
 
     self.installNotificationHandler = function() {
-        cordova.plugins.firebase.messaging.onMessage(function(payload) {
+        FirebasePlugin.onMessageReceived(function(payload) {
             console.log("New foreground FCM message: ", payload);
             self.notificationHandler(payload);
-        });
-        cordova.plugins.firebase.messaging.onBackgroundMessage(function(payload) {
-            console.log("New background FCM message: ", payload);
-            self.notificationHandler(payload);
+        }, function(error) {
+            console.error("Error receiving message: ", error);
         });
     };
 
     self.notificationHandler = function(data) {
         console.debug(data);
-        if(notificationCallback)
-        {
+        if(notificationCallback) {
             notificationCallback(data.mensaje);
         }
 
         if(data.isCommand) return;
 
-        if(data.wasTapped)
-        {
-            //Notification was received on device tray and tapped by the user.
-            alert(data.mensaje);
-        }
-        else
-        {
-            //Notification was received in foreground. Maybe the user needs to be notified.
-            alert(data.mensaje);
+        if(data.tap) {
+            // Notification was received on device tray and tapped by the user.
+            alert(data.body);
+        } else {
+            // Notification was received in foreground. Maybe the user needs to be notified.
+            alert(data.body);
         }
 
         MensajesService.MarcarComoLeidos();
     };
 
     self.requestPermissionGrant = function () {
-        cordova.plugins.firebase.messaging.requestPermission().then(function() {
+        FirebasePlugin.grantPermission(function() {
             console.log("Notification permission granted.");
-        }).catch(function() {
-            console.log("Notification permission denied.");
+        }, function(error) {
+            console.error("Permission denied: ", error);
         });
     };
 
     self.registerCallbacks = function() {
-        if(!window.cordova || !window.cordova.plugins.firebase) return;
+        if(!window.FirebasePlugin) return;
 
         self.getToken();
         self.installTokenRefresher();
